@@ -1,0 +1,521 @@
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://petriflow.com/petriflow.schema.xsd">
+	<id>subject</id>
+	<version>1.0.0</version>
+	<initials>dat</initials>
+	<title>Subject</title>
+	<icon>data_thresholding</icon>
+	<defaultRole>true</defaultRole>
+	<anonymousRole>true</anonymousRole>
+	<transitionRole>true</transitionRole>
+	<caseName>Subject</caseName>
+	<processEvents>
+		<event type="upload">
+			<id>upload</id>
+			<actions phase="post">
+				<action>
+					createCase("subject")
+				</action>
+			</actions>
+		</event>
+	</processEvents>
+<!-- GALERIE	-->
+	<data type="text" immediate="true">
+		<id>reg_cislo</id>
+		<title>Reg. číslo</title>
+	</data>
+	<data type="text">
+		<id>reg_cislo_tmp</id>
+		<title>Reg. číslo</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>nazov_galerie</id>
+		<title>Názov galérie</title>
+	</data>
+	<data type="text">
+		<id>nazov_galerie_tmp</id>
+		<title>Názov galérie</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>mesto</id>
+		<title>Mesto</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>mesto_tmp</id>
+		<title>Mesto</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>ulica_cislo</id>
+		<title>Ulica, číslo</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>ulica_cislo_tmp</id>
+		<title>Ulica, číslo</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>psc</id>
+		<title>PSČ</title>
+	</data>
+	<data type="text">
+		<id>psc_tmp</id>
+		<title>PSČ</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>telefon</id>
+		<title>Telefón</title>
+	</data>
+	<data type="text">
+		<id>telefon_tmp</id>
+		<title>Telefón</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>fax</id>
+		<title>Fax</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>fax_tmp</id>
+		<title>Fax</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>email</id>
+		<title>Email</title>
+	</data>
+	<data type="text">
+		<id>email_tmp</id>
+		<title>Email</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>webove_sidlo</id>
+		<title>Webové sídlo</title>
+	</data>
+	<data type="text">
+		<id>webove_sidlo_tmp</id>
+		<title>Webové sídlo</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>ico</id>
+		<title>IČO</title>
+	</data>
+	<data type="text">
+		<id>ico_tmp</id>
+		<title>IČO</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>zriadovatel_zakladatel</id>
+		<title>Zriaďovateľ/ zakladateľ</title>
+	</data>
+	<data type="text">
+		<id>zriadovatel_zakladatel_tmp</id>
+		<title>Zriaďovateľ/ zakladateľ</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>nazov_pravnickej_osoby_ktorej_je_galeria_organizacnym_utvarom</id>
+		<title>Názov právnickej osoby,ktorej je galéria organizačným útvarom</title>
+	</data>
+	<data type="text">
+		<id>nazov_pravnickej_osoby_ktorej_je_galeria_organizacnym_utvarom_tmp</id>
+		<title>Názov právnickej osoby,ktorej je galéria organizačným útvarom</title>
+	</data>
+	<data type="date" immediate="true">
+		<id>datum_registracie</id>
+		<title>Dátum registrácie</title>
+	</data>
+	<data type="date">
+		<id>datum_registracie_tmp</id>
+		<title>Dátum registrácie</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>zameranie_specializacia_galerie</id>
+		<title>Zameranie, špecializácia galérie</title>
+	</data>
+	<data type="text">
+		<id>zameranie_specializacia_galerie_tmp</id>
+		<title>Zameranie, špecializácia galérie</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>poznamka</id>
+		<title>Poznámka</title>
+		<component>
+			<name>textarea</name>
+		</component>
+	</data>
+	<data type="text">
+		<id>poznamka_tmp</id>
+		<title>Poznámka</title>
+	</data>
+	<!--END OF GALERIES	-->
+	<transition>
+		<id>disable</id>
+		<label>Disable</label>
+		<x>240</x>
+		<y>112</y>
+		<label/>
+	</transition>
+	<transition>
+		<id>enable</id>
+		<x>240</x>
+		<y>48</y>
+		<label>Enable</label>
+		<dataGroup>
+			<id>enable_0</id>
+			<cols>4</cols>
+			<layout>grid</layout>
+		</dataGroup>
+	</transition>
+	<transition>
+		<id>delete</id>
+		<x>464</x>
+		<y>80</y>
+		<label>delete</label>
+	</transition>
+	<transition>
+		<id>init</id>
+		<x>80</x>
+		<y>80</y>
+		<label>init</label>
+	</transition>
+	<transition>
+		<id>edit</id>
+		<x>400</x>
+		<y>16</y>
+		<label>edit</label>
+	</transition>
+	<transition>
+		<id>form_register_galerie</id>
+		<x>420</x>
+		<y>220</y>
+		<label>Form register galérií</label>
+		<icon>list</icon>
+		<dataGroup>
+			<id>form_register_galerie_0</id>
+			<cols>2</cols>
+			<layout>grid</layout>
+			<dataRef>
+				<id>reg_cislo</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>nazov_galerie</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>mesto</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>ulica_cislo</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>psc</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>4</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>telefon</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>5</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>fax</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>6</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>email</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>7</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>webove_sidlo</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>8</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>ico</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>9</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>zriadovatel_zakladatel</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>10</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>nazov_pravnickej_osoby_ktorej_je_galeria_organizacnym_utvarom</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>11</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>datum_registracie</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>12</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>zameranie_specializacia_galerie</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>13</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>poznamka</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>14</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+		</dataGroup>
+		<event type="assign">
+			<id>form_register_galerie_assign</id>
+		</event>
+		<event type="finish">
+			<id>form_register_galerie_finish</id>
+		</event>
+		<event type="cancel">
+			<id>form_register_galerie_cancel</id>
+		</event>
+		<event type="delegate">
+			<id>form_register_galerie_delegate</id>
+		</event>
+	</transition>
+	<place>
+		<id>p2</id>
+		<x>368</x>
+		<y>80</y>
+		<tokens>0</tokens>
+		<static>false</static>
+	</place>
+	<place>
+		<id>p3</id>
+		<x>560</x>
+		<y>80</y>
+		<tokens>0</tokens>
+		<static>false</static>
+	</place>
+	<place>
+		<id>p4</id>
+		<x>16</x>
+		<y>80</y>
+		<tokens>1</tokens>
+		<static>false</static>
+	</place>
+	<place>
+		<id>p1</id>
+		<x>144</x>
+		<y>80</y>
+		<tokens>0</tokens>
+		<static>false</static>
+	</place>
+	<arc>
+		<id>a1</id>
+		<type>regular</type>
+		<sourceId>p1</sourceId>
+		<destinationId>enable</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a2</id>
+		<type>regular</type>
+		<sourceId>enable</sourceId>
+		<destinationId>p2</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a3</id>
+		<type>regular</type>
+		<sourceId>p2</sourceId>
+		<destinationId>disable</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a4</id>
+		<type>regular</type>
+		<sourceId>disable</sourceId>
+		<destinationId>p1</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a6</id>
+		<type>regular</type>
+		<sourceId>p2</sourceId>
+		<destinationId>delete</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a7</id>
+		<type>regular</type>
+		<sourceId>delete</sourceId>
+		<destinationId>p3</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a12</id>
+		<type>regular</type>
+		<sourceId>p4</sourceId>
+		<destinationId>init</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a13</id>
+		<type>regular</type>
+		<sourceId>init</sourceId>
+		<destinationId>p1</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a14</id>
+		<type>regular</type>
+		<sourceId>p2</sourceId>
+		<destinationId>edit</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a15</id>
+		<type>regular</type>
+		<sourceId>edit</sourceId>
+		<destinationId>p2</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a16</id>
+		<type>read</type>
+		<sourceId>p2</sourceId>
+		<destinationId>form_register_galerie</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+</document>
