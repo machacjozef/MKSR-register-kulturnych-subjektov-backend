@@ -232,7 +232,7 @@ class CustomActionDelegate extends ActionDelegate {
         transition.setTitle(text)
 
         subject.addTransition(transition)
-        subject.addArc(new Arc(subject.getNode("p2"), transition as Node))
+        //subject.addArc(new Arc(subject.getNode('p2'), subject.getNode(text)))
 
         petriNetService.save(subject)
     }
