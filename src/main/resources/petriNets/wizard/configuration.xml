@@ -1,0 +1,66 @@
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://petriflow.com/petriflow.schema.xsd">
+    <id>configuration</id>
+    <initials>CFG</initials>
+    <title>Konfigurácia</title>
+    <icon>device_hub</icon>
+    <defaultRole>true</defaultRole>
+    <anonymousRole>false</anonymousRole>
+    <transitionRole>false</transitionRole>
+    <caseName>Konfigurácia</caseName>
+
+
+    <transition>
+        <id>os_config</id>
+        <x>100</x>
+        <y>100</y>
+        <label>Konfigurácia štruktúry</label>
+        <dataGroup>
+            <id>os_config_1</id>
+            <cols>4</cols>
+            <layout>grid</layout>
+            <dataRef>
+                <id></id>
+                <logic></logic>
+            </dataRef>
+        </dataGroup>
+        <event type="assign">
+            <id>os_config_assign</id>
+        </event>
+        <event type="finish">
+            <id>os_config_finish</id>
+        </event>
+        <event type="cancel">
+            <id>os_config_cancel</id>
+        </event>
+        <event type="delegate">
+            <id>os_config_delegate</id>
+        </event>
+    </transition>
+    <transition>
+        <id>register_config</id>
+        <x>200</x>
+        <y>100</y>
+        <label>Konfigurácia registrov</label>
+        <dataGroup>
+            <id>register_config_1</id>
+            <cols>4</cols>
+            <layout>grid</layout>
+            <dataRef>
+                <id></id>
+                <logic></logic>
+            </dataRef>
+        </dataGroup>
+        <event type="assign">
+            <id>register_config_assign</id>
+        </event>
+        <event type="finish">
+            <id>register_config_finish</id>
+        </event>
+        <event type="cancel">
+            <id>register_config_cancel</id>
+        </event>
+        <event type="delegate">
+            <id>register_config_delegate</id>
+        </event>
+    </transition>
+</document>
