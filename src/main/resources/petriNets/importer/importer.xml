@@ -1,0 +1,616 @@
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://petriflow.com/petriflow.schema.xsd">
+	<id>import</id>
+	<version>1.0.0</version>
+	<initials>imp</initials>
+	<title>Import</title>
+	<icon>upload_file</icon>
+	<defaultRole>true</defaultRole>
+	<anonymousRole>true</anonymousRole>
+	<transitionRole>false</transitionRole>
+
+	<processEvents>
+		<event type="upload">
+			<id>tt</id>
+			<actions phase="post">
+				<action>
+					createCase("import", "aaaa")
+				</action>
+			</actions>
+		</event>
+	</processEvents>
+
+	<data type="enumeration_map">
+		<id>sector_map</id>
+		<title>Sektor</title>
+		<component>
+			<name>autocomplete</name>
+			<property key="filter">substring</property>
+		</component>
+	</data>
+	<data type="enumeration_map">
+		<id>register_map</id>
+		<title>Register</title>
+		<component>
+			<name>autocomplete</name>
+			<property key="filter">substring</property>
+		</component>
+	</data>
+
+	<data type="text">
+		<id>Nazov</id>
+		<title/>
+	</data>
+	<data type="user">
+		<id>uploader</id>
+		<title/>
+	</data>
+	<data type="taskRef">
+		<id>zoznam_import</id>
+		<title/>
+	</data>
+	<data type="dateTime">
+		<id>uploadTime</id>
+		<title/>
+	</data>
+	<data type="file">
+		<id>uploadFile</id>
+		<title/>
+		<action trigger="set">
+			uploadTime: f.uploadTime,
+			user: f.uploader;
+
+			change uploadTime value { java.time.LocalDateTime.now() }
+			def active_user = userService.getLoggedOrSystem();
+			change user value { new com.netgrif.application.engine.petrinet.domain.dataset.UserFieldValue(active_user) }
+		</action>
+	</data>
+
+	<data type="text">
+		<id>logs</id>
+		<title/>
+		<init> </init>
+	</data>
+
+	<transition>
+		<id>run</id>
+		<x>432</x>
+		<y>80</y>
+		<label/>
+		<assignPolicy>auto</assignPolicy>
+		<finishPolicy>auto_no_data</finishPolicy>
+		<event type="assign">
+			<id>run</id>
+			<actions phase="post">
+				<action>
+					uploadFile: f.uploadFile,
+					zoznam_import: f.zoznam_import,
+					register_map: f.register_map,
+					nazov: f.Nazov;
+
+					def netSuffix = register_map.value.replace("/", "_")
+					def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+
+					def totok = getHeaders(subjectNet, nazov.value, uploadFile, true)
+					change zoznam_import value {totok}
+				</action>
+			</actions>
+		</event>
+	</transition>
+	<transition>
+		<id>import</id>
+		<x>176</x>
+		<y>80</y>
+		<label/>
+		<assignPolicy>auto</assignPolicy>
+		<dataGroup>
+			<id>import_0</id>
+			<cols>4</cols>
+			<layout>grid</layout>
+			<dataRef>
+				<id>Nazov</id>
+				<logic>
+					<behavior>editable</behavior>
+					<behavior>required</behavior>
+					<behavior>immediate</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+
+			<dataRef>
+				<id>sector_map</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+				<event type="get">
+					<id>sector_map_get</id>
+					<actions phase="pre">
+						<action>
+							sector_map: f.sector_map;
+
+							def sectors = uriService.findByLevel(1)
+							change sector_map value { null }
+							change sector_map options { sectors.collectEntries { [it._id.toString(), it.name] } }
+						</action>
+					</actions>
+				</event>
+				<event type="set">
+					<id>sector_map_set</id>
+					<actions phase="post">
+						<action>
+							sector_map: f.sector_map,
+							register_map: f.register_map;
+
+							def sector = uriService.findById(sector_map.value)
+							def fullQuery = "processIdentifier:preference_item AND uriNodeId:${sector._id.toString()}"
+							def registerCases = findCasesElastic(fullQuery, org.springframework.data.domain.PageRequest.of(0, 100))
+							change register_map value { null }
+							change register_map options { registerCases.collectEntries { [it.dataSet["nodePath"].value, it.dataSet["menu_name"].value.defaultValue] } }
+						</action>
+					</actions>
+				</event>
+			</dataRef>
+			<dataRef>
+				<id>register_map</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+				<event type="get">
+					<id>register_map_get</id>
+					<actions phase="post">
+						<action>
+							register_map: f.register_map;
+
+							change register_map value { [] }
+							change register_map options { [:] }
+						</action>
+					</actions>
+				</event>
+			</dataRef>
+
+
+			<dataRef>
+				<id>uploadFile</id>
+				<logic>
+					<behavior>editable</behavior>
+					<behavior>required</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploader</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploadTime</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>logs</id>
+				<logic>
+					<behavior>hidden</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>4</y>
+					<rows>5</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+				<component>
+					<name>htmltextarea</name>
+				</component>
+			</dataRef>
+		</dataGroup>
+	</transition>
+	<transition>
+		<id>view</id>
+		<x>656</x>
+		<y>80</y>
+		<label/>
+		<dataGroup>
+			<id>import_0</id>
+			<cols>4</cols>
+			<layout>grid</layout>
+			<dataRef>
+				<id>Nazov</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>register_map</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploadFile</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploader</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploadTime</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>zoznam_import</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>4</y>
+					<rows>5</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+		</dataGroup>
+		<event type="finish">
+			<id>aarun</id>
+			<actions phase="pre">
+				<action>
+					register_map: f.register_map,
+					zoznam_import: f.zoznam_import;
+
+					def netSuffix = register_map.value.replace("/", "_")
+					def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+
+					generateDataField(subjectNet, zoznam_import.value)
+				</action>
+			</actions>
+		</event>
+	</transition>
+	<transition>
+		<id>t3</id>
+		<x>880</x>
+		<y>80</y>
+		<label/>
+		<assignPolicy>auto</assignPolicy>
+		<finishPolicy>auto_no_data</finishPolicy>
+		<event type="assign">
+			<id>ass</id>
+			<actions phase="post">
+				<action>
+					uploadFile: f.uploadFile,
+					logs: f.logs,
+					register_map: f.register_map,
+					zoznam_import: f.zoznam_import;
+
+					def netSuffix = register_map.value.replace("/", "_")
+					def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+
+					String totok = importData(subjectNet, uploadFile, zoznam_import)
+					change logs value { logs.value + totok }
+				</action>
+			</actions>
+		</event>
+		<dataGroup>
+			<id>t3_0</id>
+			<cols>4</cols>
+			<layout>grid</layout>
+			<dataRef>
+				<id>uploadTime</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploader</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>logs</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>7</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+		</dataGroup>
+	</transition>
+	<transition>
+		<id>t4</id>
+		<x>1072</x>
+		<y>48</y>
+		<label/>
+		<dataGroup>
+			<id>t4_0</id>
+			<cols>4</cols>
+			<layout>grid</layout>
+			<dataRef>
+				<id>Nazov</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploader</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploadTime</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>uploadFile</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>logs</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>3</y>
+					<rows>5</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+		</dataGroup>
+	</transition>
+	<place>
+		<id>p1</id>
+		<x>80</x>
+		<y>80</y>
+		<tokens>1</tokens>
+		<static>false</static>
+	</place>
+	<place>
+		<id>p2</id>
+		<x>304</x>
+		<y>80</y>
+		<tokens>0</tokens>
+		<static>false</static>
+	</place>
+	<place>
+		<id>p3</id>
+		<x>560</x>
+		<y>80</y>
+		<tokens>0</tokens>
+		<static>false</static>
+	</place>
+	<place>
+		<id>p4</id>
+		<x>784</x>
+		<y>80</y>
+		<tokens>0</tokens>
+		<static>false</static>
+	</place>
+	<place>
+		<id>p5</id>
+		<x>976</x>
+		<y>80</y>
+		<tokens>0</tokens>
+		<static>false</static>
+	</place>
+	<arc>
+		<id>a1</id>
+		<type>regular</type>
+		<sourceId>p1</sourceId>
+		<destinationId>import</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a2</id>
+		<type>regular</type>
+		<sourceId>import</sourceId>
+		<destinationId>p2</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a3</id>
+		<type>regular</type>
+		<sourceId>p2</sourceId>
+		<destinationId>run</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a4</id>
+		<type>regular</type>
+		<sourceId>run</sourceId>
+		<destinationId>p3</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a5</id>
+		<type>regular</type>
+		<sourceId>p3</sourceId>
+		<destinationId>view</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a6</id>
+		<type>regular</type>
+		<sourceId>view</sourceId>
+		<destinationId>p4</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a7</id>
+		<type>regular</type>
+		<sourceId>p4</sourceId>
+		<destinationId>t3</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a8</id>
+		<type>regular</type>
+		<sourceId>t3</sourceId>
+		<destinationId>p5</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a9</id>
+		<type>read</type>
+		<sourceId>p5</sourceId>
+		<destinationId>t4</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+</document>

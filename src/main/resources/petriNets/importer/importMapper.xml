@@ -1,0 +1,119 @@
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://petriflow.com/petriflow.schema.xsd">
+	<id>importMapper</id>
+	<initials>ima</initials>
+	<title>ImportMapper</title>
+	<icon>upload</icon>
+	<defaultRole>true</defaultRole>
+	<anonymousRole>true</anonymousRole>
+	<transitionRole>false</transitionRole>
+	<data type="text">
+		<id>importName</id>
+		<title>Názov v súbore</title>
+	</data>
+	<data type="enumeration_map">
+		<id>register_ids_clone</id>
+		<title>Výber v registry</title>
+		<options>
+			<option key="new">Novy</option>
+		</options>
+		<action trigger="set">
+			totok: f.register_ids_clone,
+			new_title: f.new_title,
+			trans: t.t1,
+			new_type: f.new_type;
+
+			if(totok.value == "new" ) {
+				make new_type, editable on trans when { return true; }
+				make new_title, editable on trans when { return true; }
+				make new_type, required on trans when { return true; }
+				make new_title, required on trans when { return true; }
+			} else {
+				make new_type, hidden on trans when { return true; }
+				make new_title, hidden on trans when { return true; }
+			}
+		</action>
+	</data>
+	<data type="text">
+		<id>new_title</id>
+		<title>Názov ktorý bude v registry</title>
+	</data>
+	<data type="enumeration_map">
+		<id>new_type</id>
+		<title>Typ</title>
+		<options>
+			<option key="text">Text</option>
+			<option key="number">Číslo</option>
+			<option key="boolean">Pravda/Nepravda</option>
+			<option key="date">Dátum</option>
+			<option key="dateTime">Dátum a čas</option>
+		</options>
+		<init>text</init>
+	</data>
+	<transition>
+		<id>t1</id>
+		<x>368</x>
+		<y>112</y>
+		<label/>
+		<dataGroup>
+			<id>t1_0</id>
+			<cols>4</cols>
+			<layout>grid</layout>
+			<dataRef>
+				<id>importName</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>register_ids_clone</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>new_title</id>
+				<logic>
+					<behavior>hidden</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>new_type</id>
+				<logic>
+					<behavior>hidden</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+		</dataGroup>
+	</transition>
+</document>
