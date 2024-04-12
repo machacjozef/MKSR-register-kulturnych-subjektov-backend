@@ -1,4 +1,4 @@
-package com.netgrif.etask.petrinet.domain;
+package com.netgrif.mksr.petrinet.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

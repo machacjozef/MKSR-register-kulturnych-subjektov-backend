@@ -1,13 +1,13 @@
-package com.netgrif.etask.petrinet.responsebodies;
+package com.netgrif.mksr.petrinet.responsebodies;
 
 import com.netgrif.application.engine.petrinet.domain.UriNode;
-import com.netgrif.etask.petrinet.web.EtaskUriController;
+import com.netgrif.mksr.petrinet.web.CustomUriController;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
-public class EtaskUriNodeResource extends EntityModel<EtaskUriNode> {
+public class CustomUriNodeResource extends EntityModel<CustomUriNode> {
 
-    public EtaskUriNodeResource(EtaskUriNode content) {
+    public CustomUriNodeResource(CustomUriNode content) {
         super(content);
         buildLinks();
     }
@@ -16,11 +16,11 @@ public class EtaskUriNodeResource extends EntityModel<EtaskUriNode> {
         UriNode content = getContent();
         if (content != null) {
             add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-                            .methodOn(EtaskUriController.class).getRoot())
+                            .methodOn(CustomUriController.class).getRoot())
                     .withSelfRel());
 
             add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder
-                            .methodOn(EtaskUriController.class).getOne(content.getUriPath()))
+                            .methodOn(CustomUriController.class).getOne(content.getUriPath()))
                     .withSelfRel());
         }
     }

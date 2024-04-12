@@ -1,4 +1,4 @@
-package com.netgrif.etask.petrinet.web.requestbodies;
+package com.netgrif.mksr.petrinet.web.requestbodies;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

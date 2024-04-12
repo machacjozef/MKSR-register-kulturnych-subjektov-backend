@@ -36,7 +36,7 @@
             parentId: f.parentId;
 
             if (!task.isPresent()) {
-                return;
+            return;
             }
 
             def parentCase = findCase({it._id.eq(new org.bson.types.ObjectId(parentId.value))});
@@ -46,14 +46,14 @@
             def currentIndex = previousTaskRefValue.findIndexOf({ id -&gt; id == task.get().stringId})
 
             if (currentIndex != 0) {
-                previousTaskRefValue.remove(currentIndex)
-                previousTaskRefValue.add(currentIndex - 1, task.get().stringId)
+            previousTaskRefValue.remove(currentIndex)
+            previousTaskRefValue.add(currentIndex - 1, task.get().stringId)
 
-                def parentTask = findTask({it.caseId.eq(parentId.value).and(it.transitionId.eq("navigationMenuConfig"))})
+            def parentTask = findTask({it.caseId.eq(parentId.value).and(it.transitionId.eq("navigationMenuConfig"))})
 
-                setDataWithPropagation(parentTask, [
-                        "filter_tasks": ["type": "taskRef", "value": previousTaskRefValue]
-                ])
+            setDataWithPropagation(parentTask, [
+            "filter_tasks": ["type": "taskRef", "value": previousTaskRefValue]
+            ])
             }
         </action>
     </data>
@@ -65,7 +65,7 @@
             parentId: f.parentId;
 
             if (!task.isPresent()) {
-                return;
+            return;
             }
 
             def parentCase = findCase({it._id.eq(new org.bson.types.ObjectId(parentId.value))});
@@ -75,14 +75,14 @@
             def currentIndex = previousTaskRefValue.findIndexOf({ id -&gt; id == task.get().stringId})
 
             if (currentIndex != previousTaskRefValue.size() - 1) {
-                previousTaskRefValue.remove(currentIndex)
-                previousTaskRefValue.add(currentIndex + 1, task.get().stringId)
+            previousTaskRefValue.remove(currentIndex)
+            previousTaskRefValue.add(currentIndex + 1, task.get().stringId)
 
-                def parentTask = findTask({it.caseId.eq(parentId.value).and(it.transitionId.eq("navigationMenuConfig"))})
+            def parentTask = findTask({it.caseId.eq(parentId.value).and(it.transitionId.eq("navigationMenuConfig"))})
 
-                setDataWithPropagation(parentTask, [
-                        "filter_tasks": ["type": "taskRef", "value": previousTaskRefValue]
-                ])
+            setDataWithPropagation(parentTask, [
+            "filter_tasks": ["type": "taskRef", "value": previousTaskRefValue]
+            ])
             }
         </action>
     </data>
@@ -95,7 +95,7 @@
             filterCase: f.filter_case;
 
             if (!task.isPresent()) {
-                return;
+            return;
             }
 
             def parentCase = findCase({it._id.eq(new org.bson.types.ObjectId(parentId.value))});
@@ -118,11 +118,11 @@
             def parentTask = findTask({it.caseId.eq(parentId.value).and(it.transitionId.eq("navigationMenuConfig"))})
 
             setDataWithPropagation(parentTask, [
-                    "filter_tasks": ["type": "taskRef", "value": previousTaskRefValue],
-                    "referenced_filters": ["type": "caseRef", "value": previousCaseRefValue],
+            "filter_tasks": ["type": "taskRef", "value": previousTaskRefValue],
+            "referenced_filters": ["type": "caseRef", "value": previousCaseRefValue],
             ])
             async.run {
-                workflowService.deleteCase(useCase.stringId)
+            workflowService.deleteCase(useCase.stringId)
             }
         </action>
     </data>
@@ -163,12 +163,12 @@
             iconPreview: f.icon_preview;
 
             if (iconIdentifier.value == "") {
-                change iconPreview value {<![CDATA["""<span></span>"""]]>}
-                return;
+            change iconPreview value {<![CDATA["""<span></span>"""]]>}
+            return;
             }
 
             change iconPreview value {
-				<![CDATA["""<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><span class="material-icons">"""]]> + iconIdentifier.value + <![CDATA["""</span>"""]]>
+            <![CDATA["""<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><span class="material-icons">"""]]> + iconIdentifier.value + <![CDATA["""</span>"""]]>
             }
         </action>
     </data>
@@ -299,12 +299,12 @@
 
 
             if (create_case_button_icon.value == "") {
-                change create_case_button_icon_preview value {<![CDATA["""<span></span>"""]]>}
-                return;
+            change create_case_button_icon_preview value {<![CDATA["""<span></span>"""]]>}
+            return;
             }
 
             change create_case_button_icon_preview value {
-				<![CDATA["""<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><span class="material-icons">"""]]> + create_case_button_icon.value + <![CDATA["""</span>"""]]>
+            <![CDATA["""<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><span class="material-icons">"""]]> + create_case_button_icon.value + <![CDATA["""</span>"""]]>
             }
         </action>
     </data>
@@ -317,17 +317,6 @@
     <data type="multichoice_map">
         <id>allowed_nets</id>
         <title name="allowed_nets">Allowed nets</title>
-    </data>
-
-    <data type="boolean" immediate="true">
-        <id>case_require_title_in_creation</id>
-        <title name="case_require_title_in_creation">Require title input in case creation?</title>
-        <init>true</init>
-    </data>
-    <data type="boolean" immediate="true">
-        <id>enable_case_title</id>
-        <title name="enable_case_title">Open menu for case creation?</title>
-        <init>true</init>
     </data>
 
     <!--	<data type="boolean">-->
@@ -372,8 +361,6 @@
         <i18nString name="create_case_button_icon">Identifikátor ikony tlačidla "Nová inštancia"</i18nString>
         <i18nString name="create_case_button_icon_preview">Náhľad ikony</i18nString>
         <i18nString name="default_headers">Predvolené hlavičky</i18nString>
-        <i18nString name="case_require_title_in_creation">Vyžadujem zadanie názvu prípadu pri vytvorení ?</i18nString>
-        <i18nString name="enable_case_title">Otvor menu pre vytvorenie prípadu?</i18nString>
     </i18n>
     <i18n locale="de">
         <i18nString name="menu_item_title">Menüpunkttitel</i18nString>
@@ -399,8 +386,6 @@
         <i18nString name="create_case_button_icon">Ikone ID</i18nString>
         <i18nString name="create_case_button_icon_preview">Ikonevorschau</i18nString>
         <i18nString name="default_headers">Anzuzeigende Attributmenge auswählen</i18nString>
-        <i18nString name="case_require_title_in_creation">Benötige ich beim Erstellen einen Fallnamen?</i18nString>
-        <i18nString name="enable_case_title">Das Menü öffnen, um einen Fall zu erstellen?</i18nString>
     </i18n>
     <!-- TRANSITIONS -->
     <transition>
@@ -484,7 +469,7 @@
                         workflowService.save(filterCase)
                         def filterTask = findTask({ it._id.eq(filterTask.value[0])})
                         setData(filterTask, [
-                                "new_title": ["type":"text", "value": entryDefaultName.value]
+                        "new_title": ["type":"text", "value": entryDefaultName.value]
                         ])
 
                         change entryName value {return new com.netgrif.application.engine.petrinet.domain.I18nString(entryDefaultName.value)}
@@ -724,6 +709,85 @@
                     <offset>0</offset>
                 </layout>
             </dataRef>
+            <!--			<dataRef>-->
+            <!--				<id>use_i18n</id>-->
+            <!--				<logic>-->
+            <!--					<behavior>editable</behavior>-->
+            <!--				</logic>-->
+            <!--				<layout>-->
+            <!--					<x>0</x>-->
+            <!--					<y>2</y>-->
+            <!--					<rows>1</rows>-->
+            <!--					<cols>1</cols>-->
+            <!--					<offset>0</offset>-->
+            <!--					<template>material</template>-->
+            <!--				</layout>-->
+            <!--				<event type="set">-->
+            <!--					<id>0</id>-->
+            <!--					<actions phase="post">-->
+            <!--						<action>-->
+            <!--							trans: t.this,-->
+            <!--							i18nMultichoice: f.enabled_locales,-->
+            <!--							i18nEnumeration: f.edited_locale,-->
+            <!--							i18nTextfield: f.new_translation_value,-->
+            <!--							useI18n: f.use_i18n;-->
+
+            <!--							make i18nMultichoice,editable on trans when {useI18n.value}-->
+            <!--							make i18nEnumeration,editable on trans when {useI18n.value}-->
+            <!--							make i18nTextfield,editable on trans when {useI18n.value}-->
+
+            <!--							make i18nMultichoice,hidden on trans when {!useI18n.value}-->
+            <!--							make i18nEnumeration,hidden on trans when {!useI18n.value}-->
+            <!--							make i18nTextfield,hidden on trans when {!useI18n.value}-->
+            <!--						</action>-->
+            <!--					</actions>-->
+            <!--				</event>-->
+            <!--			</dataRef>-->
+            <!--			<dataRef>-->
+            <!--				<id>enabled_locales</id>-->
+            <!--				<logic>-->
+            <!--					<behavior>hidden</behavior>-->
+            <!--				</logic>-->
+            <!--				<layout>-->
+            <!--					<x>1</x>-->
+            <!--					<y>2</y>-->
+            <!--					<rows>1</rows>-->
+            <!--					<cols>1</cols>-->
+            <!--					<offset>0</offset>-->
+            <!--					<template>material</template>-->
+            <!--					<appearance>outline</appearance>-->
+            <!--				</layout>-->
+            <!--			</dataRef>-->
+            <!--			<dataRef>-->
+            <!--				<id>edited_locale</id>-->
+            <!--				<logic>-->
+            <!--					<behavior>hidden</behavior>-->
+            <!--				</logic>-->
+            <!--				<layout>-->
+            <!--					<x>2</x>-->
+            <!--					<y>2</y>-->
+            <!--					<rows>1</rows>-->
+            <!--					<cols>1</cols>-->
+            <!--					<offset>0</offset>-->
+            <!--					<template>material</template>-->
+            <!--					<appearance>outline</appearance>-->
+            <!--				</layout>-->
+            <!--			</dataRef>-->
+            <!--			<dataRef>-->
+            <!--				<id>new_translation_value</id>-->
+            <!--				<logic>-->
+            <!--					<behavior>hidden</behavior>-->
+            <!--				</logic>-->
+            <!--				<layout>-->
+            <!--					<x>3</x>-->
+            <!--					<y>2</y>-->
+            <!--					<rows>1</rows>-->
+            <!--					<cols>2</cols>-->
+            <!--					<offset>0</offset>-->
+            <!--					<template>material</template>-->
+            <!--					<appearance>outline</appearance>-->
+            <!--				</layout>-->
+            <!--			</dataRef>-->
             <dataRef>
                 <id>filter_preview</id>
                 <logic>
@@ -822,51 +886,6 @@
                 <layout>
                     <x>0</x>
                     <y>6</y>
-                    <rows>1</rows>
-                    <cols>4</cols>
-                    <offset>0</offset>
-                    <template>material</template>
-                    <appearance>outline</appearance>
-                </layout>
-            </dataRef>
-            <dataRef>
-                <id>default_headers</id>
-                <logic>
-                    <behavior>editable</behavior>
-                </logic>
-                <layout>
-                    <x>0</x>
-                    <y>6</y>
-                    <rows>1</rows>
-                    <cols>4</cols>
-                    <offset>0</offset>
-                    <template>material</template>
-                    <appearance>outline</appearance>
-                </layout>
-            </dataRef>
-            <dataRef>
-                <id>enable_case_title</id>
-                <logic>
-                    <behavior>editable</behavior>
-                </logic>
-                <layout>
-                    <x>0</x>
-                    <y>7</y>
-                    <rows>1</rows>
-                    <cols>4</cols>
-                    <offset>0</offset>
-                    <template>material</template>
-                    <appearance>outline</appearance>
-                </layout>
-            </dataRef>
-            <dataRef>
-                <id>case_require_title_in_creation</id>
-                <logic>
-                    <behavior>editable</behavior>
-                </logic>
-                <layout>
-                    <x>0</x>
-                    <y>8</y>
                     <rows>1</rows>
                     <cols>4</cols>
                     <offset>0</offset>

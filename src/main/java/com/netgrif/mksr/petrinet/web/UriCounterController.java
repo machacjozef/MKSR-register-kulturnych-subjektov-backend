@@ -1,9 +1,9 @@
-package com.netgrif.etask.petrinet.web;
+package com.netgrif.mksr.petrinet.web;
 
 import com.netgrif.application.engine.auth.service.interfaces.IUserService;
-import com.netgrif.etask.petrinet.responsebodies.MultipleCountResponse;
-import com.netgrif.etask.petrinet.service.interfaces.IUriCountService;
-import com.netgrif.etask.petrinet.web.requestbodies.UriCountRequest;
+import com.netgrif.mksr.petrinet.responsebodies.MultipleCountResponse;
+import com.netgrif.mksr.petrinet.service.interfaces.IUriCountService;
+import com.netgrif.mksr.petrinet.web.requestbodies.UriCountRequest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,13 +1,14 @@
-package com.netgrif.etask.petrinet.responsebodies;
+package com.netgrif.mksr.petrinet.responsebodies;
 
 import com.netgrif.application.engine.petrinet.domain.UriNode;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Set;
 
-public class EtaskUriNode extends UriNode {
+public class CustomUriNode extends UriNode {
 
     @Getter
     @Setter
@@ -33,7 +34,7 @@ public class EtaskUriNode extends UriNode {
     @Setter
     protected boolean isHidden = false;
 
-    public EtaskUriNode(UriNode node) {
-        super(node.getId(), node.getUriPath(), node.getName(), node.getParentId(), node.getParent(), node.getChildrenId(), node.getChildren(), node.getLevel(), node.getContentTypes());
+    public CustomUriNode(UriNode node) {
+        super(new ObjectId(node.getStringId()), node.getUriPath(), node.getName(), node.getParentId(), node.getParent(), node.getChildrenId(), node.getChildren(), node.getLevel(), node.getContentTypes());
     }
 }

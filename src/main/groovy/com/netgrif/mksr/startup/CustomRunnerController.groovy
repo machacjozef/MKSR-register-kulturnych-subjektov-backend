@@ -1,8 +1,8 @@
-package com.netgrif.etask.startup
+package com.netgrif.mksr.startup
 
 import com.netgrif.application.engine.startup.*
 
-class EtaskRunnerController extends RunnerController {
+class CustomRunnerController extends RunnerController {
 
     private List order = [
             ElasticsearchRunner,
@@ -31,8 +31,7 @@ class EtaskRunnerController extends RunnerController {
             QuartzSchedulerRunner,
             PdfRunner,
             // ADDITIONAL CUSTOM RUNNERS
-            EtaskRunner,
-            EtaskUserCreator,
+            CustomRunner,
             // END OF ADDITIONAL CUSTOM RUNNERS
             FinisherRunnerSuperCreator,
             FinisherRunner,

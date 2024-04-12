@@ -1,9 +1,8 @@
-package com.netgrif.etask.petrinet.service;
+package com.netgrif.mksr.petrinet.service;
 
 import com.netgrif.application.engine.petrinet.domain.PetriNet;
 import com.netgrif.application.engine.petrinet.domain.repositories.PetriNetRepository;
 import com.netgrif.application.engine.petrinet.service.PetriNetService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
@@ -13,11 +12,11 @@ import java.util.Optional;
 
 @Service
 @Primary
-public class EtaskPetriNetService extends PetriNetService {
+public class CustomPetriNetService extends PetriNetService {
 
     private final PetriNetRepository repository;
 
-    public EtaskPetriNetService(PetriNetRepository repository) {
+    public CustomPetriNetService(PetriNetRepository repository) {
         this.repository = repository;
     }
 

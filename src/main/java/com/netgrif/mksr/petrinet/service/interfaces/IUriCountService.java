@@ -1,7 +1,7 @@
-package com.netgrif.etask.petrinet.service.interfaces;
+package com.netgrif.mksr.petrinet.service.interfaces;
 
 import com.netgrif.application.engine.auth.domain.IUser;
-import com.netgrif.etask.petrinet.web.requestbodies.UriCountRequest;
+import com.netgrif.mksr.petrinet.web.requestbodies.UriCountRequest;
 
 import java.util.Locale;
 import java.util.Map;

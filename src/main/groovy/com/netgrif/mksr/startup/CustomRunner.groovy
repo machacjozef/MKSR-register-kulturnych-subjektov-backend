@@ -1,4 +1,4 @@
-package com.netgrif.etask.startup
+package com.netgrif.mksr.startup
 
 
 import com.netgrif.application.engine.auth.service.interfaces.IUserService
@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class EtaskRunner extends AbstractOrderedCommandLineRunner {
+class CustomRunner extends AbstractOrderedCommandLineRunner {
 
-    private static Logger log = LoggerFactory.getLogger(EtaskRunner.class)
+    private static Logger log = LoggerFactory.getLogger(CustomRunner.class)
 
     @Autowired
     private IWorkflowService workflowService

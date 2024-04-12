@@ -1,11 +1,11 @@
-package com.netgrif.etask.petrinet.web;
+package com.netgrif.mksr.petrinet.web;
 
 import com.netgrif.application.engine.petrinet.domain.UriNode;
 import com.netgrif.application.engine.petrinet.service.interfaces.IUriService;
-import com.netgrif.etask.petrinet.domain.UriNodeDataRepository;
-import com.netgrif.etask.petrinet.responsebodies.EtaskUriNode;
-import com.netgrif.etask.petrinet.responsebodies.EtaskUriNodeResource;
-import com.netgrif.etask.petrinet.responsebodies.EtaskUriNodeResources;
+import com.netgrif.mksr.petrinet.domain.UriNodeDataRepository;
+import com.netgrif.mksr.petrinet.responsebodies.CustomUriNode;
+import com.netgrif.mksr.petrinet.responsebodies.CustomUriNodeResource;
+import com.netgrif.mksr.petrinet.responsebodies.CustomUriNodeResources;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,12 +30,12 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v2/uri")
 @Tag(name = "Process URI")
-public class EtaskUriController {
+public class CustomUriController {
 
     private final IUriService uriService;
     private final UriNodeDataRepository repository;
 
-    public EtaskUriController(IUriService uriService, UriNodeDataRepository repository) {
+    public CustomUriController(IUriService uriService, UriNodeDataRepository repository) {
         this.uriService = uriService;
         this.repository = repository;
     }
@@ -45,10 +45,10 @@ public class EtaskUriController {
             @ApiResponse(responseCode = "200", description = "OK"),
     })
     @GetMapping(value = "/root", produces = MediaTypes.HAL_JSON_VALUE)
-    public EntityModel<EtaskUriNode> getRoot() {
-        EtaskUriNode uriNode = new EtaskUriNode(uriService.getRoot());
+    public EntityModel<CustomUriNode> getRoot() {
+        CustomUriNode uriNode = new CustomUriNode(uriService.getRoot());
         uriNode = populateDirectRelatives(loadUriNode(uriNode));
-        return new EtaskUriNodeResource(uriNode);
+        return new CustomUriNodeResource(uriNode);
     }
 
     @Operation(summary = "Get one UriNode by URI path", security = {@SecurityRequirement(name = "BasicAuth")})
@@ -56,11 +56,11 @@ public class EtaskUriController {
             @ApiResponse(responseCode = "200", description = "OK"),
     })
     @GetMapping(value = "/{uri}", produces = MediaTypes.HAL_JSON_VALUE)
-    public EntityModel<EtaskUriNode> getOne(@PathVariable("uri") String uri) {
+    public EntityModel<CustomUriNode> getOne(@PathVariable("uri") String uri) {
         uri = new String(Base64.getDecoder().decode(uri));
-        EtaskUriNode uriNode = new EtaskUriNode(uriService.findByUri(uri));
+        CustomUriNode uriNode = new CustomUriNode(uriService.findByUri(uri));
         uriNode = populateDirectRelatives(loadUriNode(uriNode));
-        return new EtaskUriNodeResource(uriNode);
+        return new CustomUriNodeResource(uriNode);
     }
 
     @Operation(summary = "Get UriNodes by parent id", security = {@SecurityRequirement(name = "BasicAuth")})
@@ -68,10 +68,10 @@ public class EtaskUriController {
             @ApiResponse(responseCode = "200", description = "OK"),
     })
     @GetMapping(value = "/parent/{parentId}", produces = MediaTypes.HAL_JSON_VALUE)
-    public CollectionModel<EtaskUriNode> getByParent(@PathVariable("parentId") String parentId) {
-        List<EtaskUriNode> uriNodes = uriService.findAllByParent(parentId).stream().map(this::loadUriNode).collect(Collectors.toList());
+    public CollectionModel<CustomUriNode> getByParent(@PathVariable("parentId") String parentId) {
+        List<CustomUriNode> uriNodes = uriService.findAllByParent(parentId).stream().map(this::loadUriNode).collect(Collectors.toList());
         uriNodes.forEach(this::populateDirectRelatives);
-        return new EtaskUriNodeResources(uriNodes);
+        return new CustomUriNodeResources(uriNodes);
     }
 
     @Operation(summary = "Get UriNodes by on the same level", security = {@SecurityRequirement(name = "BasicAuth")})
@@ -79,22 +79,22 @@ public class EtaskUriController {
             @ApiResponse(responseCode = "200", description = "OK"),
     })
     @GetMapping(value = "/level/{level}", produces = MediaTypes.HAL_JSON_VALUE)
-    public CollectionModel<EtaskUriNode> getByLevel(@PathVariable("level") int level) {
-        List<EtaskUriNode> uriNodes = uriService.findByLevel(level).stream().map(this::loadUriNode).collect(Collectors.toList());
+    public CollectionModel<CustomUriNode> getByLevel(@PathVariable("level") int level) {
+        List<CustomUriNode> uriNodes = uriService.findByLevel(level).stream().map(this::loadUriNode).collect(Collectors.toList());
         uriNodes.forEach(this::populateDirectRelatives);
-        return new EtaskUriNodeResources(uriNodes);
+        return new CustomUriNodeResources(uriNodes);
     }
 
-    protected EtaskUriNode populateDirectRelatives(EtaskUriNode customUriNode) {
+    protected CustomUriNode populateDirectRelatives(CustomUriNode customUriNode) {
         uriService.populateDirectRelatives(customUriNode);
         Set<UriNode> children = customUriNode.getChildren().stream().map(this::loadUriNode).collect(Collectors.toSet());
         customUriNode.setChildren(children);
         return customUriNode;
     }
 
-    protected EtaskUriNode loadUriNode(UriNode node) {
-        EtaskUriNode customUriNode = new EtaskUriNode(node);
-        repository.findByUriNodeId(node.getId()).ifPresent(data -> {
+    protected CustomUriNode loadUriNode(UriNode node) {
+        CustomUriNode customUriNode = new CustomUriNode(node);
+        repository.findByUriNodeId(node.getStringId()).ifPresent(data -> {
             customUriNode.setRoleIds(data.getProcessRolesIds());
             customUriNode.setMenuItemIdentifiers(data.getMenuItemIdentifiers());
             customUriNode.setIcon(data.getIcon());

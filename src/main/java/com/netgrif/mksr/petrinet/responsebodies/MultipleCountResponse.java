@@ -1,4 +1,4 @@
-package com.netgrif.etask.petrinet.responsebodies;
+package com.netgrif.mksr.petrinet.responsebodies;
 
 import lombok.Data;
 

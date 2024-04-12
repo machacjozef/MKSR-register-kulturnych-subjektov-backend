@@ -1,6 +1,6 @@
-package com.netgrif.etask;
+package com.netgrif.mksr;
 
-import com.netgrif.etask.startup.EtaskRunnerController;
+import com.netgrif.mksr.startup.CustomRunnerController;
 import com.netgrif.application.engine.ApplicationEngine;
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate;
 import com.netgrif.application.engine.startup.RunnerController;
@@ -17,26 +17,26 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @EnableCaching
 @SpringBootApplication
-@ComponentScan({"com.netgrif.application.engine", "com.netgrif.etask"})
-public class EtaskApplication {
+@ComponentScan({"com.netgrif.application.engine", "com.netgrif.mksr"})
+public class CustomApplication {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder()
-                .sources(ApplicationEngine.class, EtaskApplication.class)
+                .sources(ApplicationEngine.class, CustomApplication.class)
                 .run(args);
     }
 
     @Bean
     @Primary
     public RunnerController runnerController() {
-        return new EtaskRunnerController();
+        return new CustomRunnerController();
     }
 
     @Primary
     @Bean("actionDelegate")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ActionDelegate actionDelegate() {
-        return new EtaskActionDelegate();
+        return new CustomActionDelegate();
     }
 }
 

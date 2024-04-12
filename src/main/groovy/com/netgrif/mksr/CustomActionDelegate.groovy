@@ -1,4 +1,4 @@
-package com.netgrif.etask
+package com.netgrif.mksr
 
 import com.netgrif.application.engine.auth.domain.Authority
 import com.netgrif.application.engine.auth.domain.IUser
@@ -11,13 +11,13 @@ import com.netgrif.application.engine.petrinet.domain.UriNode
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
 import com.netgrif.application.engine.workflow.domain.Case
-import com.netgrif.etask.petrinet.domain.UriNodeData
-import com.netgrif.etask.petrinet.domain.UriNodeDataRepository
+import com.netgrif.mksr.petrinet.domain.UriNodeData
+import com.netgrif.mksr.petrinet.domain.UriNodeDataRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class EtaskActionDelegate extends ActionDelegate {
+class CustomActionDelegate extends ActionDelegate {
 
     @Autowired
     private UriNodeDataRepository uriNodeDataRepository
@@ -52,7 +52,7 @@ class EtaskActionDelegate extends ActionDelegate {
             changeMenuItem menuItem bannedRoles { bannedRoles }
             changeMenuItem menuItem uri { uri }
             changeMenuItem menuItem filter { filter }
-            return workflowService.findOne(menuItem.stringId)
+            return workflowService.findOne(menuItem.getStringId())
         }
     }
 

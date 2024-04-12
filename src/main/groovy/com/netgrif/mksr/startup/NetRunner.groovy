@@ -1,4 +1,4 @@
-package com.netgrif.etask.startup
+package com.netgrif.mksr.startup
 
 import com.netgrif.application.engine.petrinet.service.interfaces.IPetriNetService
 import com.netgrif.application.engine.startup.AbstractOrderedCommandLineRunner
@@ -22,6 +22,7 @@ class NetRunner extends AbstractOrderedCommandLineRunner {
     @Override
     void run(String... args) throws Exception {
         log.info("Calling net runner")
+        return  //TODO !!
         for (PetriNetEnum netEnum : PetriNetEnum.values()) {
             importNet(netEnum)
         }

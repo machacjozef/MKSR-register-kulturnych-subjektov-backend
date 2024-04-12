@@ -1,4 +1,4 @@
-package com.netgrif.etask;
+package com.netgrif.mksr;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
