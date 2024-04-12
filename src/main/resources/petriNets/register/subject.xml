@@ -180,13 +180,13 @@
 		<label>edit</label>
 	</transition>
 	<transition>
-		<id>form_register_galerie</id>
+		<id>form_register_galerie_dynamic</id>
 		<x>420</x>
 		<y>220</y>
 		<label>Form register galérií</label>
 		<icon>list</icon>
 		<dataGroup>
-			<id>form_register_galerie_0</id>
+			<id>form_register_galerie_dynamic_0</id>
 			<cols>2</cols>
 			<layout>grid</layout>
 			<dataRef>
@@ -401,16 +401,16 @@
 			</dataRef>
 		</dataGroup>
 		<event type="assign">
-			<id>form_register_galerie_assign</id>
+			<id>form_register_galerie_dynamic_assign</id>
 		</event>
 		<event type="finish">
-			<id>form_register_galerie_finish</id>
+			<id>form_register_galerie_dynamic_finish</id>
 		</event>
 		<event type="cancel">
-			<id>form_register_galerie_cancel</id>
+			<id>form_register_galerie_dynamic_cancel</id>
 		</event>
 		<event type="delegate">
-			<id>form_register_galerie_delegate</id>
+			<id>form_register_galerie_dynamic_delegate</id>
 		</event>
 	</transition>
 	<place>
@@ -515,7 +515,7 @@
 		<id>a16</id>
 		<type>read</type>
 		<sourceId>p2</sourceId>
-		<destinationId>form_register_galerie</destinationId>
+		<destinationId>form_register_galerie_dynamic</destinationId>
 		<multiplicity>1</multiplicity>
 	</arc>
 </document>
