@@ -137,6 +137,7 @@
 		<component>
 			<name>textarea</name>
 		</component>
+		<init>Hallllo</init>
 	</data>
 	<data type="text">
 		<id>poznamka_tmp</id>
@@ -180,17 +181,17 @@
 		<label>edit</label>
 	</transition>
 	<transition>
-		<id>form_register_galerie</id>
+		<id>dynamic</id>
 		<x>420</x>
 		<y>220</y>
 		<label>Form register galérií</label>
 		<icon>list</icon>
 		<dataGroup>
-			<id>form_register_galerie_0</id>
+			<id>form_register_galerie_dynamic_0</id>
 			<cols>2</cols>
 			<layout>grid</layout>
 			<dataRef>
-				<id>reg_cislo</id>
+				<id>reg_cislo_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -204,7 +205,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>nazov_galerie</id>
+				<id>nazov_galerie_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -218,7 +219,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>mesto</id>
+				<id>mesto_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -232,7 +233,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>ulica_cislo</id>
+				<id>ulica_cislo_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -246,7 +247,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>psc</id>
+				<id>psc_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -260,7 +261,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>telefon</id>
+				<id>telefon_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -274,7 +275,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>fax</id>
+				<id>fax_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -288,7 +289,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>email</id>
+				<id>email_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -302,7 +303,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>webove_sidlo</id>
+				<id>webove_sidlo_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -316,7 +317,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>ico</id>
+				<id>ico_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -330,7 +331,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>zriadovatel_zakladatel</id>
+				<id>zriadovatel_zakladatel_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -344,7 +345,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>nazov_pravnickej_osoby_ktorej_je_galeria_organizacnym_utvarom</id>
+				<id>nazov_pravnickej_osoby_ktorej_je_galeria_organizacnym_utvarom_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -358,7 +359,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>datum_registracie</id>
+				<id>datum_registracie_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -372,7 +373,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>zameranie_specializacia_galerie</id>
+				<id>zameranie_specializacia_galerie_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -386,7 +387,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>poznamka</id>
+				<id>poznamka_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -401,16 +402,30 @@
 			</dataRef>
 		</dataGroup>
 		<event type="assign">
-			<id>form_register_galerie_assign</id>
+			<id>form_register_galerie_dynamic_assign</id>
+			<title>Edit</title>
+
 		</event>
 		<event type="finish">
-			<id>form_register_galerie_finish</id>
+			<id>form_register_galerie_dynamic_finish</id>
+			<title>Save</title>
+			<actions phase="pre">
+				<action>
+					saveChanges()
+				</action>
+			</actions>
 		</event>
 		<event type="cancel">
-			<id>form_register_galerie_cancel</id>
+			<id>form_register_galerie_dynamic_cancel</id>
+			<title>Revert changes</title>
+			<actions phase="pre">
+				<action>
+					revertChanges()
+				</action>
+			</actions>
 		</event>
 		<event type="delegate">
-			<id>form_register_galerie_delegate</id>
+			<id>form_register_galerie_dynamic_delegate</id>
 		</event>
 	</transition>
 	<place>
@@ -515,7 +530,7 @@
 		<id>a16</id>
 		<type>read</type>
 		<sourceId>p2</sourceId>
-		<destinationId>form_register_galerie</destinationId>
+		<destinationId>dynamic</destinationId>
 		<multiplicity>1</multiplicity>
 	</arc>
 </document>
