@@ -4,6 +4,7 @@ import com.netgrif.application.engine.auth.domain.Authority
 import com.netgrif.application.engine.auth.domain.IUser
 import com.netgrif.application.engine.auth.domain.User
 import com.netgrif.application.engine.auth.domain.UserState
+import com.netgrif.application.engine.petrinet.domain.DataFieldLogic
 import com.netgrif.application.engine.petrinet.domain.I18nString
 import com.netgrif.application.engine.petrinet.domain.PetriNet
 import com.netgrif.application.engine.petrinet.domain.Transition
@@ -11,7 +12,11 @@ import com.netgrif.application.engine.petrinet.domain.UriContentType
 import com.netgrif.application.engine.petrinet.domain.UriNode
 import com.netgrif.application.engine.petrinet.domain.arcs.Arc
 import com.netgrif.application.engine.petrinet.domain.dataset.Field
+import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldBehavior
+import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldLayout
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
+import com.netgrif.application.engine.petrinet.domain.events.DataEvent
+import com.netgrif.application.engine.petrinet.domain.events.DataEventType
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
 import com.netgrif.application.engine.petrinet.domain.version.Version
 import com.netgrif.application.engine.workflow.domain.Case
@@ -260,22 +265,28 @@ class CustomActionDelegate extends ActionDelegate {
         petriNetService.save(newNet)
     }
 
-    def getNetName() {
-
+    def createNewDataSetLogic(int x, int y) {
+        DataFieldLogic dfl = new DataFieldLogic()
+        dfl.behavior = [FieldBehavior.VISIBLE]
+        dfl.events = [:]
+        DataEvent deg = new DataEvent()
+        deg.type = DataEventType.GET
+        deg.preActions = []
+        deg.postActions = []
+        dfl.events.put(DataEventType.GET, deg)
+        DataEvent seg = new DataEvent()
+        seg.type = DataEventType.GET
+        seg.preActions = []
+        seg.postActions = []
+        dfl.events.put(DataEventType.SET, seg)
+        FieldLayout fl = new FieldLayout()
+        fl.template = "material"
+        fl.appearance = "outline"
+        fl.rows = 1
+        fl.cols = 2
+        fl.x = x
+        fl.y = y
+        dfl.setLayout(fl)
+        return dfl
     }
-
-    def test(Field register_map) {
-        def netSuffix = register_map.value.replace("/", "_")
-        def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
-        def referencedFields = subjectNet.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
-        def subjectTransition = subjectNet.transitions.find { it.key == "dynamic" }.value
-        subjectTransition.dataSet.each { field ->
-            def fieldRefCase = createCase("field_config")
-            def fieldRefTask = fieldRefCase.tasks[0].task
-            change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
-            change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
-            change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
-        }
-    }
-
 }
