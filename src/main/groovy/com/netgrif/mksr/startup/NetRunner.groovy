@@ -22,7 +22,6 @@ class NetRunner extends AbstractOrderedCommandLineRunner {
     @Override
     void run(String... args) throws Exception {
         log.info("Calling net runner")
-        return  //TODO !!
         for (PetriNetEnum netEnum : PetriNetEnum.values()) {
             importNet(netEnum)
         }

@@ -101,7 +101,7 @@ class CustomActionDelegate extends ActionDelegate {
         List<PetriNet> nets = uriPaths.collect {
             UriNode node = getUri(it) as UriNode
             if (!node) return null
-            return petriNetService.findAllByUri(node.id)
+            return petriNetService.findAllByUriNodeId(node.stringId)
         }.findAll { it != null }.flatten() as List<PetriNet>
         List<String> roleIds = nets.collect { it.roles.keySet() as List }.flatten() as List<String>
         setUriNodeDataRoles(uri, roleIds)
@@ -127,11 +127,11 @@ class CustomActionDelegate extends ActionDelegate {
      */
     void setUriNodeDataFilters(String uri, List<String> menuItemIdentifiers) {
         UriNode uriNode = getUri(uri) as UriNode
-        uriNodeDataRepository.findByUriNodeId(uriNode.getId()).ifPresentOrElse(data -> {
+        uriNodeDataRepository.findByUriNodeId(uriNode.getStringId()).ifPresentOrElse(data -> {
             data.setMenuItemIdentifiers(menuItemIdentifiers)
             uriNodeDataRepository.save(data)
         }, () -> {
-            uriNodeDataRepository.save(new UriNodeData(uriNode.getId(), null, null, false, false, null, menuItemIdentifiers))
+            uriNodeDataRepository.save(new UriNodeData(uriNode.getStringId(), null, null, false, false, null, menuItemIdentifiers))
         })
     }
 
@@ -142,11 +142,11 @@ class CustomActionDelegate extends ActionDelegate {
      */
     void setUriNodeDataRoles(String uri, List<String> roleIds) {
         UriNode uriNode = getUri(uri) as UriNode
-        uriNodeDataRepository.findByUriNodeId(uriNode.getId()).ifPresentOrElse(data -> {
+        uriNodeDataRepository.findByUriNodeId(uriNode.getStringId()).ifPresentOrElse(data -> {
             data.setProcessRolesIds(roleIds as Set)
             uriNodeDataRepository.save(data)
         }, () -> {
-            uriNodeDataRepository.save(new UriNodeData(uriNode.getId(), null, null, false, false, roleIds as Set, null))
+            uriNodeDataRepository.save(new UriNodeData(uriNode.getStringId(), null, null, false, false, roleIds as Set, null))
         })
     }
 
@@ -164,7 +164,7 @@ class CustomActionDelegate extends ActionDelegate {
         UriNode uriNode = getUri(uri) as UriNode
         uriNode.setName(title)
         uriService.save(uriNode)
-        uriNodeDataRepository.findByUriNodeId(uriNode.getId()).ifPresentOrElse(data -> {
+        uriNodeDataRepository.findByUriNodeId(uriNode.getStringId()).ifPresentOrElse(data -> {
             data.setIcon(icon)
             data.setSection(section)
             data.setIconSvg(isSvgIcon)
@@ -172,7 +172,7 @@ class CustomActionDelegate extends ActionDelegate {
             data.setHidden(isHidden)
             uriNodeDataRepository.save(data)
         }, () -> {
-            uriNodeDataRepository.save(new UriNodeData(uriNode.getId(), section, icon, isSvgIcon, isHidden, roleIds as Set, null))
+            uriNodeDataRepository.save(new UriNodeData(uriNode.getStringId(), section, icon, isSvgIcon, isHidden, roleIds as Set, null))
         })
     }
 
