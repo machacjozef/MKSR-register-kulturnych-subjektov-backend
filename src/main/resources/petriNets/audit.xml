@@ -15,7 +15,8 @@
 			<actions phase="pre">
 				<action>
 					def menuItemBody = new com.netgrif.application.engine.workflow.domain.menu.MenuItemBody("/audit","audit_general","Audit logs", "Audit logs", "manage_search", "manage_search")
-					menuItemBody.setCaseDefaultHeaders(["detail","id_of_subject","time_of_change","person"])
+					menuItemBody.setCaseDefaultHeaders(["audit-detail","audit-id_of_subject","audit-time_of_change","audit-person","audit-field_id"])
+					menuItemBody.setShowCreateCaseButton(false)
 					createFilterInMenu(menuItemBody,"processIdentifier:\"audit\"", "Case", "private",["audit"])
 
 					setUriNodeData("/audit", "Audit", null, "manage_search")
@@ -61,7 +62,7 @@
 		<roleRef>
 			<id>admin</id>
 			<logic>
-				<perform>true</perform>
+				<view>true</view>
 			</logic>
 		</roleRef>
 		<dataGroup>
