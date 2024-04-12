@@ -6,7 +6,18 @@
 	<icon>data_thresholding</icon>
 	<defaultRole>true</defaultRole>
 	<anonymousRole>true</anonymousRole>
-	<transitionRole>false</transitionRole>
+	<transitionRole>true</transitionRole>
+	<caseName>Subject</caseName>
+	<processEvents>
+		<event type="upload">
+			<id>upload</id>
+			<actions phase="post">
+				<action>
+					createCase("subject")
+				</action>
+			</actions>
+		</event>
+	</processEvents>
 <!-- GALERIE	-->
 	<data type="text" immediate="true">
 		<id>reg_cislo</id>
@@ -134,6 +145,7 @@
 	<!--END OF GALERIES	-->
 	<transition>
 		<id>disable</id>
+		<label>Disable</label>
 		<x>240</x>
 		<y>112</y>
 		<label/>
@@ -142,7 +154,7 @@
 		<id>enable</id>
 		<x>240</x>
 		<y>48</y>
-		<label/>
+		<label>Enable</label>
 		<dataGroup>
 			<id>enable_0</id>
 			<cols>4</cols>
@@ -153,19 +165,19 @@
 		<id>delete</id>
 		<x>464</x>
 		<y>80</y>
-		<label/>
+		<label>delete</label>
 	</transition>
 	<transition>
 		<id>init</id>
 		<x>80</x>
 		<y>80</y>
-		<label/>
+		<label>init</label>
 	</transition>
 	<transition>
 		<id>edit</id>
 		<x>400</x>
 		<y>16</y>
-		<label/>
+		<label>edit</label>
 	</transition>
 	<transition>
 		<id>form_register_galerie</id>

@@ -15,8 +15,11 @@ import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.Actio
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
 import com.netgrif.application.engine.petrinet.domain.version.Version
 import com.netgrif.application.engine.workflow.domain.Case
+import com.netgrif.application.engine.workflow.domain.DataField
+import com.netgrif.mksr.migration.MigrationHelper
 import com.netgrif.mksr.petrinet.domain.UriNodeData
 import com.netgrif.mksr.petrinet.domain.UriNodeDataRepository
+import com.netgrif.mksr.startup.NetRunner
 import org.apache.commons.lang3.StringUtils
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +30,9 @@ class CustomActionDelegate extends ActionDelegate {
 
     @Autowired
     private UriNodeDataRepository uriNodeDataRepository
+
+    @Autowired
+    private MigrationHelper migrationHelper
 
     /**
      * create or update menu item of specified type
@@ -223,6 +229,21 @@ class CustomActionDelegate extends ActionDelegate {
                 processRoles: [] as Set<ProcessRole>))
     }
 
+    def addFieldToSubject(String fieldId, def value) {
+        migrationHelper.updateCasesCursor({ Case useCase ->
+            useCase.dataSet.put(fieldId, new DataField(value))
+            useCase.immediateData(fieldId)
+            useCase.dataSet.put(fieldId + "_tmp", new DataField(value))
+            migrationHelper.elasticIndex(useCase)
+        }, NetRunner.PetriNetEnum.SUBJECT.identifier)
+    }
+
+    def reloadTasksOnSubject() {
+        migrationHelper.updateCasesCursor({ Case useCase ->
+            migrationHelper.setPetriNet(useCase)
+            taskService.reloadTasks(useCase)
+        }, NetRunner.PetriNetEnum.SUBJECT.identifier)
+    }
     String textPreprocess(String text){
         return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
     }
