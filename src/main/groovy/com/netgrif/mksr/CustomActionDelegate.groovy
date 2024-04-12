@@ -10,12 +10,15 @@ import com.netgrif.application.engine.petrinet.domain.Transition
 import com.netgrif.application.engine.petrinet.domain.UriContentType
 import com.netgrif.application.engine.petrinet.domain.UriNode
 import com.netgrif.application.engine.petrinet.domain.arcs.Arc
+import com.netgrif.application.engine.petrinet.domain.dataset.Field
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
+import com.netgrif.application.engine.petrinet.domain.version.Version
 import com.netgrif.application.engine.workflow.domain.Case
 import com.netgrif.mksr.petrinet.domain.UriNodeData
 import com.netgrif.mksr.petrinet.domain.UriNodeDataRepository
 import org.apache.commons.lang3.StringUtils
+import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -221,29 +224,31 @@ class CustomActionDelegate extends ActionDelegate {
     }
 
     String textPreprocess(String text){
-        StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
+        return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
     }
 
-    void deepCopyAndRenameTransition(String text){
-        PetriNet subject = petriNetService.getNewestVersionByIdentifier("subject")
-
-        Transition transition = deepcopy(subject.getTransition("form_register_galerie"))
-        transition.setImportId(text)
-        transition.setTitle(text)
-
-        subject.addTransition(transition)
-        subject.addArc(new Arc(subject.getNode("p2"), transition as Node))
-
-        petriNetService.save(subject)
+    def createNewNet(String newIdentifier) {
+        def templateNet = petriNetService.getNewestVersionByIdentifier("subject")
+        def newNet = templateNet.clone()
+        newNet.identifier = newIdentifier
+        newNet.objectId = new ObjectId()
+        Version v = new Version()
+        v.major = 1
+        v.minor = 0
+        v.patch = 0
+        petriNetService.save(newNet)
     }
 
-    def deepcopy(orig) {
-        bos = new ByteArrayOutputStream()
-        oos = new ObjectOutputStream(bos)
-        oos.writeObject(orig); oos.flush()
-        bin = new ByteArrayInputStream(bos.toByteArray())
-        ois = new ObjectInputStream(bin)
-        return ois.readObject()
+    def getNetName() {
+
+    }
+
+    def test(Field sector_map, Field register_map) {
+        def sector = uriService.findById(sector_map.value)
+        def fullQuery = "processIdentifier:preference_item AND uriNodeId:${sector._id.toString()}"
+        def registerCases = findCasesElastic(fullQuery, org.springframework.data.domain.PageRequest.of(0, 100))
+        change register_map value { null }
+        change register_map options { registerCases.collectEntries { [it.dataSet["nodePath"].value, it.dataSet["menu_name"].value.defaultValue] } }
     }
 
 }
