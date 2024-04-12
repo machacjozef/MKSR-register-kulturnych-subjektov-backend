@@ -1,0 +1,184 @@
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://petriflow.com/petriflow.schema.xsd">
+	<id>audit</id>
+	<version>1.0.0</version>
+	<initials>AUD</initials>
+	<title>Audit log</title>
+	<icon>change_history</icon>
+	<defaultRole>false</defaultRole>
+	<anonymousRole>false</anonymousRole>
+	<transitionRole>false</transitionRole>
+	<caseName>Audit log</caseName>
+	<processEvents>
+		<event type="upload">
+			<id>menu_import</id>
+
+			<actions phase="pre">
+				<action>
+					def menuItemBody = new com.netgrif.application.engine.workflow.domain.menu.MenuItemBody("/audit","audit_general","Audit logs", "Audit logs", "manage_search", "manage_search")
+					menuItemBody.setCaseDefaultHeaders(["detail","id_of_subject","time_of_change","person"])
+					createFilterInMenu(menuItemBody,"processIdentifier:\"audit\"", "Case", "private",["audit"])
+
+					setUriNodeData("/audit", "Audit", null, "manage_search")
+					setUriNodeDataFilters("/audit", ["audit_general"])
+				</action>
+			</actions>
+		</event>
+	</processEvents>
+	<role>
+		<id>admin</id>
+		<title>Admin</title>
+	</role>
+	<data type="text" immediate="true">
+		<id>detail</id>
+		<title>Detail</title>
+		<component>
+			<name>textarea</name>
+		</component>
+	</data>
+	<data type="text" immediate="true">
+		<id>id_of_subject</id>
+		<title>Id of subject</title>
+	</data>
+	<data type="dateTime" immediate="true">
+		<id>time_of_change</id>
+		<title>Time of change</title>
+	</data>
+	<data type="user" immediate="true">
+		<id>person</id>
+		<title>Person</title>
+	</data>
+	<data type="text" immediate="true">
+		<id>field_id</id>
+		<title>Field Id</title>
+	</data>
+	<transition>
+		<id>t1</id>
+		<x>380</x>
+		<y>140</y>
+		<label>Auditná správa</label>
+		<icon>timeline</icon>
+		<assignPolicy>auto</assignPolicy>
+		<roleRef>
+			<id>admin</id>
+			<logic>
+				<perform>true</perform>
+			</logic>
+		</roleRef>
+		<dataGroup>
+			<id>t1_0</id>
+			<cols>4</cols>
+			<layout>grid</layout>
+			<dataRef>
+				<id>detail</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>4</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>id_of_subject</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>field_id</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+
+			<dataRef>
+				<id>time_of_change</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>time_of_change</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>person</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+		</dataGroup>
+		<event type="assign">
+			<id>t1_assign</id>
+		</event>
+		<event type="finish">
+			<id>t1_finish</id>
+		</event>
+		<event type="cancel">
+			<id>t1_cancel</id>
+		</event>
+		<event type="delegate">
+			<id>t1_delegate</id>
+		</event>
+	</transition>
+	<place>
+		<id>p1</id>
+		<x>260</x>
+		<y>140</y>
+		<tokens>1</tokens>
+		<static>false</static>
+	</place>
+	<arc>
+		<id>a1</id>
+		<type>read</type>
+		<sourceId>p1</sourceId>
+		<destinationId>t1</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+</document>

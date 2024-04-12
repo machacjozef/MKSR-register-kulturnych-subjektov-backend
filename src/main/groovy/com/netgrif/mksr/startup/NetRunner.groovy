@@ -37,7 +37,8 @@ class NetRunner extends AbstractOrderedCommandLineRunner {
 
         CONFIGURATION_TILES("configuration_tiles.xml", "configuration_tiles"),
         SUBJECT("register/subject.xml", "subject"),
-        CONFIGURATION_NET("configuration/configuration.xml", "configuration")
+        AUDIT("audit.xml","audit")
+//        CONFIGURATION_NET("configuration/configuration.xml", "configuration")
 
 
         public final String file
