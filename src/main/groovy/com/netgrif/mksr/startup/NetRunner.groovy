@@ -36,7 +36,7 @@ class NetRunner extends AbstractOrderedCommandLineRunner {
     enum PetriNetEnum {
 
         CONFIGURATION_TILES("configuration_tiles.xml", "configuration_tiles"),
-        SUBJECT("subject.xml", "subject"),
+        SUBJECT("register/subject.xml", "subject"),
 
 
         public final String file
