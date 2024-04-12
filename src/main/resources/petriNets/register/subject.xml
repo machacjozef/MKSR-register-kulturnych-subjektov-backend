@@ -180,10 +180,10 @@
 		<label>edit</label>
 	</transition>
 	<transition>
-		<id>form_register_galerie</id>
+		<id>dynamic</id>
 		<x>420</x>
 		<y>220</y>
-		<label>Form register galérií</label>
+		<label>Register</label>
 		<icon>list</icon>
 		<dataGroup>
 			<id>form_register_galerie_0</id>
@@ -515,7 +515,7 @@
 		<id>a16</id>
 		<type>read</type>
 		<sourceId>p2</sourceId>
-		<destinationId>form_register_galerie</destinationId>
+		<destinationId>dynamic</destinationId>
 		<multiplicity>1</multiplicity>
 	</arc>
 </document>

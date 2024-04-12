@@ -264,12 +264,18 @@ class CustomActionDelegate extends ActionDelegate {
 
     }
 
-    def test(Field sector_map, Field register_map) {
-        def sector = uriService.findById(sector_map.value)
-        def fullQuery = "processIdentifier:preference_item AND uriNodeId:${sector._id.toString()}"
-        def registerCases = findCasesElastic(fullQuery, org.springframework.data.domain.PageRequest.of(0, 100))
-        change register_map value { null }
-        change register_map options { registerCases.collectEntries { [it.dataSet["nodePath"].value, it.dataSet["menu_name"].value.defaultValue] } }
+    def test(Field register_map) {
+        def netSuffix = register_map.value.replace("/", "_")
+        def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+        def referencedFields = subjectNet.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
+        def subjectTransition = subjectNet.transitions.find { it.key == "dynamic" }.value
+        subjectTransition.dataSet.each { field ->
+            def fieldRefCase = createCase("field_config")
+            def fieldRefTask = fieldRefCase.tasks[0].task
+            change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
+            change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
+            change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
+        }
     }
 
 }

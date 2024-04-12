@@ -438,16 +438,17 @@
                                 change field_refs_cases value { [] }
                             }
 
+//                            test(register_map)
                             def netSuffix = register_map.value.replace("/", "_")
-                            def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + newSuffix)
+                            def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
                             def referencedFields = subjectNet.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
-                            def subjectTransition = subjectNet.transitions.find {it.key == "dynamic"}
+                            def subjectTransition = subjectNet.transitions.find { it.key == "dynamic" }.value
                             subjectTransition.dataSet.each { field ->
                                 def fieldRefCase = createCase("field_config")
                                 def fieldRefTask = fieldRefCase.tasks[0].task
                                 change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
                                 change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
-                                change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field }
+                                change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
                             }
                         </action>
                     </actions>
