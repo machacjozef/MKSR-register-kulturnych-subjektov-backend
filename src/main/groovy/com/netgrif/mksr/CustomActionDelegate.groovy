@@ -6,13 +6,17 @@ import com.netgrif.application.engine.auth.domain.User
 import com.netgrif.application.engine.auth.domain.UserState
 import com.netgrif.application.engine.petrinet.domain.I18nString
 import com.netgrif.application.engine.petrinet.domain.PetriNet
-import com.netgrif.application.engine.petrinet.domain.Transition
 import com.netgrif.application.engine.petrinet.domain.UriContentType
 import com.netgrif.application.engine.petrinet.domain.UriNode
-import com.netgrif.application.engine.petrinet.domain.arcs.Arc
+import com.netgrif.application.engine.petrinet.domain.dataset.BooleanField
+import com.netgrif.application.engine.petrinet.domain.dataset.DateField
+import com.netgrif.application.engine.petrinet.domain.dataset.DateTimeField
 import com.netgrif.application.engine.petrinet.domain.dataset.Field
+import com.netgrif.application.engine.petrinet.domain.dataset.NumberField
+import com.netgrif.application.engine.petrinet.domain.dataset.TextField
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
+import com.netgrif.application.engine.startup.ImportHelper
 import com.netgrif.application.engine.petrinet.domain.version.Version
 import com.netgrif.application.engine.workflow.domain.Case
 import com.netgrif.application.engine.workflow.domain.DataField
@@ -24,6 +28,9 @@ import org.apache.commons.lang3.StringUtils
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.usermodel.*
+
 
 @Component
 class CustomActionDelegate extends ActionDelegate {
@@ -277,5 +284,244 @@ class CustomActionDelegate extends ActionDelegate {
             change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
         }
     }
+
+    PetriNet appendToNetNewField(PetriNet net, String id, String type) {
+        net.getDataSet().put(id.trim().toLowerCase(), buildField(type))
+        net.getDataSet().put(id.trim().toLowerCase() + "_tmp", buildField(type))
+        return net
+    }
+
+    def buildField(String type) {
+        Field field
+        switch (type) {
+            case "boolean":
+                field = new BooleanField();
+                field.setDefaultValue(false)
+                break
+            case "date":
+                field = new DateField()
+                break
+            case "dateTime":
+                field = new DateTimeField()
+                break
+            case "number":
+                field = new NumberField()
+                field.setDefaultValue(0D)
+                break
+            default:
+                field = new TextField("")
+                break
+        }
+        return field
+    }
+
+
+
+
+    String importData(def net, def field, def zoznam) {
+        def excelData = loadDataBasedOnFileExtension(field.value.name, field.value.path, false)
+
+        if (excelData == null) {
+            throw new IllegalArgumentException("Zly format")
+        }
+        return ""
+
+    }
+
+
+    List<String> getHeaders(def netName, def importName, def field, Boolean skipData) {
+        def excelData = loadDataBasedOnFileExtension(field.value.name, field.value.path, skipData)
+
+        if (excelData == null) {
+            throw new IllegalArgumentException("Zly format")
+        }
+
+        println("Hlavičky stĺpcov:")
+        println(excelData.headers.join('\t'))
+
+        LinkedHashMap<String, I18nString> options = []
+        options.put("new", new I18nString("Nový"))
+
+        def referencedFields = netName.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
+
+        referencedFields.each { it ->
+            {
+                if (!(it.key.contains("_tmp"))) {
+                    options.put(it.key, it.value)
+                }
+            }
+        }
+
+        def multi = []
+        List<String> tasky = []
+        excelData.headers.each { name ->
+            Case caze = createCase("importMapper", importName + "-" + name)
+            def aa = porovnajKluc(name, options)
+            if (aa == null) {
+                multi = []
+            } else {
+                String bb = aa?.collect().toSet().first()?.key
+                println(bb)
+                multi = bb
+            }
+            Map data = [
+                    "importName"        : [
+                            "value": name,
+                            "type" : "text"
+                    ],
+                    "new_title"         : [
+                            "value": name,
+                            "type" : "text"
+                    ],
+                    "register_ids_clone": [
+                            "value"  : multi,
+                            "options": options,
+                            "type"   : "enumeration_map"
+                    ]
+            ]
+            caze = dataService.setData(
+                    caze.tasks.find { it.transition == "t1" }.task,
+                    ImportHelper.populateDataset(data)
+            ).getCase()
+            workflowService.save(caze)
+            tasky.add(caze.tasks.find { it.transition == "t1" }.task)
+        }
+        return tasky
+    }
+
+    def getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.')
+        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
+            return fileName.substring(dotIndex + 1)
+        }
+        return ""
+    }
+
+    def loadDataBasedOnFileExtension(String name, String filePath, boolean skipData) {
+        def extension = getFileExtension(name)
+
+        switch (extension.toLowerCase()) {
+            case 'xlsx':
+                return readExcelData(filePath, skipData)
+            case 'csv':
+                return readCsvData(filePath, skipData)
+            default:
+                log.warn("Nepodporovaná prípona súboru: $extension")
+                return null
+        }
+    }
+
+    def readExcelData(String filePath, boolean skipData) {
+        FileInputStream fileInputStream = new FileInputStream(filePath)
+        XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream)
+        XSSFSheet sheet = workbook.getSheetAt(0)  // TODO iba prvy!
+
+        List<List<String>> data = []
+        List<String> headers = null
+
+        for (Row row : sheet) {
+            List<String> rowData = []
+
+            for (Cell cell : row) {
+                String cellValue = getCellValueAsString(cell)
+                rowData.add(cellValue)
+            }
+
+            if (headers == null) {
+                headers = rowData
+                if (skipData) {
+                    continue
+                }
+            } else {
+                data.add(rowData)
+            }
+        }
+        workbook.close()
+        return [headers: headers, data: data]
+    }
+
+    def getCellValueAsString(Cell cell) {
+        if (cell == null) {
+            return ""
+        }
+        switch (cell.getCellType()) {
+            case CellType.STRING:
+                return cell.getStringCellValue()
+            case CellType.NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString()
+                } else {
+                    return cell.getNumericCellValue().toString()
+                }
+            case CellType.BOOLEAN:
+                return cell.getBooleanCellValue().toString()
+            case CellType.BLANK:
+                return ""
+            default:
+                return ""
+        }
+    }
+
+    def readCsvData(String filePath, boolean skipData) {
+        def headers = []
+        def data = []
+        def file = new File(filePath)
+
+        try {
+
+        } catch (Exception e) {
+            println("Chyba pri načítaní súboru CSV: $e.message")
+            return null
+        }
+
+        return [headers: headers, data: data]
+    }
+
+    def porovnajKluc(kluc, zoznam) {
+        def najlepsiKluc = null
+        def najlepsiaPodobnost = 0
+
+        zoznam.each { it ->
+            String existujuciKluc = it.value
+            def podobnost = podobnostKlucov(kluc.toLowerCase(), existujuciKluc.toLowerCase())
+
+            if (podobnost > najlepsiaPodobnost && podobnost > 0.5) {
+                najlepsiKluc = existujuciKluc
+                najlepsiaPodobnost = podobnost
+            }
+        }
+
+        if (najlepsiKluc) {
+            return zoznam.findAll { it.value == najlepsiKluc }
+        } else {
+            return null
+        }
+    }
+
+    def podobnostKlucov(kluc, existujuciKluc) {
+        def dlzkaKluc = kluc.length()
+        def dlzkaExistujucehoKluca = existujuciKluc.length()
+        def mensiaDlzka = Math.min(dlzkaKluc, dlzkaExistujucehoKluca)
+
+        def zhodneZnaky = 0
+        for (int i = 0; i < mensiaDlzka; i++) {
+            if (kluc[i] == existujuciKluc[i]) {
+                zhodneZnaky++
+            }
+        }
+        return zhodneZnaky / mensiaDlzka.toDouble()
+    }
+
+    def generateDataField(PetriNet netValue, def zoznam){
+        zoznam.each{it ->
+            Case caze = workflowService.findOne(taskService.findOne(it).getCaseId())
+            if(caze.dataSet.get("register_ids_clone").value  == "new"){
+                netValue = appendToNetNewField(netValue, caze.dataSet.get("new_title").value, caze.dataSet.get("new_type").value)
+            }
+        }
+        petriNetService.save(netValue)
+        println("siet bola aktualizovana: " + netValue.getIdentifier())
+    }
+
 
 }
