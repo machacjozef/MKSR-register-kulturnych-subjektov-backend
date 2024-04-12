@@ -6,13 +6,16 @@ import com.netgrif.application.engine.auth.domain.User
 import com.netgrif.application.engine.auth.domain.UserState
 import com.netgrif.application.engine.petrinet.domain.I18nString
 import com.netgrif.application.engine.petrinet.domain.PetriNet
+import com.netgrif.application.engine.petrinet.domain.Transition
 import com.netgrif.application.engine.petrinet.domain.UriContentType
 import com.netgrif.application.engine.petrinet.domain.UriNode
+import com.netgrif.application.engine.petrinet.domain.arcs.Arc
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
 import com.netgrif.application.engine.workflow.domain.Case
 import com.netgrif.mksr.petrinet.domain.UriNodeData
 import com.netgrif.mksr.petrinet.domain.UriNodeDataRepository
+import org.apache.commons.lang3.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -54,6 +57,12 @@ class CustomActionDelegate extends ActionDelegate {
             changeMenuItem menuItem filter { filter }
             return workflowService.findOne(menuItem.getStringId())
         }
+    }
+
+    void createOrUpdateFolder(String id, String uri) {
+        Case menuItem = findMenuItem(id)
+        if (!menuItem) {
+            createUri(uri, UriContentType.DEFAULT)}
     }
 
     private Map<String, I18nString> collectRolesForPreferenceItem(Map<String, String> roles) {
@@ -209,6 +218,32 @@ class CustomActionDelegate extends ActionDelegate {
                 state: UserState.ACTIVE,
                 authorities: [] as Set<Authority>,
                 processRoles: [] as Set<ProcessRole>))
+    }
+
+    String textPreprocess(String text){
+        StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
+    }
+
+    void deepCopyAndRenameTransition(String text){
+        PetriNet subject = petriNetService.getNewestVersionByIdentifier("subject")
+
+        Transition transition = deepcopy(subject.getTransition("form_register_galerie"))
+        transition.setImportId(text)
+        transition.setTitle(text)
+
+        subject.addTransition(transition)
+        subject.addArc(new Arc(subject.getNode("p2"), transition as Node))
+
+        petriNetService.save(subject)
+    }
+
+    def deepcopy(orig) {
+        bos = new ByteArrayOutputStream()
+        oos = new ObjectOutputStream(bos)
+        oos.writeObject(orig); oos.flush()
+        bin = new ByteArrayInputStream(bos.toByteArray())
+        ois = new ObjectInputStream(bin)
+        return ois.readObject()
     }
 
 }

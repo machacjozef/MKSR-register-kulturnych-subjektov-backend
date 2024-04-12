@@ -18,9 +18,11 @@
                             "processIdentifier:\"export_filters\" OR processIdentifier:\"org_group\" OR " +
                             "processIdentifier:\"impersonation_config\" OR " +
                             "processIdentifier:\"impersonation_users_select\" OR " +
+                            "processIdentifier:\"configuration\" OR " +
+                            "processIdentifier:\"subject\" OR " +
                             "processIdentifier:\"preference_filter_item\")",
                             "folder",
-                            "All cases", [])
+                            "All cases", ["configuration", "subject"])
 
                     createOrUpdateMenuItem("general_system", "/general", "Case",
                             "_exists_:processIdentifier",
