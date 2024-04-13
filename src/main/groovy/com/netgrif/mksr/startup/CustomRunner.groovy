@@ -32,10 +32,10 @@ class CustomRunner extends AbstractOrderedCommandLineRunner {
     void run(String... args) throws Exception {
         log.info("Calling EtaskRunner runner")
         try {
-            actionDelegate.createNewUser("Jožko", "Daxner", "daxner@netgrif.com", "password")
-            actionDelegate.createNewUser("Jožko", "Macháč", "machac@netgrif.com", "password")
-            actionDelegate.createNewUser("Maťko", "Kranec", "kranec@netgrif.com", "password")
-            actionDelegate.createNewUser("Ľubko", "Petrovič", "petrovic@netgrif.com", "password")
+//            actionDelegate.createNewUser("Jožko", "Daxner", "daxner@netgrif.com", "password")
+//            actionDelegate.createNewUser("Jožko", "Macháč", "machac@netgrif.com", "password")
+//            actionDelegate.createNewUser("Maťko", "Kranec", "kranec@netgrif.com", "password")
+//            actionDelegate.createNewUser("Ľubko", "Petrovič", "petrovic@netgrif.com", "password")
         } catch (Exception e) {
             log.warn("Users already created", e)
         }

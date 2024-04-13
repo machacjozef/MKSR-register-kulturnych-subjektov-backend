@@ -4,6 +4,7 @@ import com.netgrif.application.engine.auth.domain.Authority
 import com.netgrif.application.engine.auth.domain.IUser
 import com.netgrif.application.engine.auth.domain.User
 import com.netgrif.application.engine.auth.domain.UserState
+import com.netgrif.application.engine.petrinet.domain.DataFieldLogic
 import com.netgrif.application.engine.petrinet.domain.I18nString
 import com.netgrif.application.engine.petrinet.domain.PetriNet
 import com.netgrif.application.engine.petrinet.domain.UriContentType
@@ -12,9 +13,13 @@ import com.netgrif.application.engine.petrinet.domain.dataset.BooleanField
 import com.netgrif.application.engine.petrinet.domain.dataset.DateField
 import com.netgrif.application.engine.petrinet.domain.dataset.DateTimeField
 import com.netgrif.application.engine.petrinet.domain.dataset.Field
+import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldBehavior
+import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldLayout
 import com.netgrif.application.engine.petrinet.domain.dataset.NumberField
 import com.netgrif.application.engine.petrinet.domain.dataset.TextField
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
+import com.netgrif.application.engine.petrinet.domain.events.DataEvent
+import com.netgrif.application.engine.petrinet.domain.events.DataEventType
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
 import com.netgrif.application.engine.startup.ImportHelper
 import com.netgrif.application.engine.petrinet.domain.version.Version
@@ -256,6 +261,22 @@ class CustomActionDelegate extends ActionDelegate {
 
     String textPreprocess(String text) {
         return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.", "_").replaceAll(" ", "")
+
+    def revertChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            change useCase.getField(fieldId) value { useCase.dataSet.get(fieldId.replace("_tmp","")).getValue() }
+        }
+    }
+
+    def saveChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            change useCase.getField(fieldId.replace("_tmp","")) value { useCase.dataSet.get(fieldId).getValue() }
+        }
+    }
+    String textPreprocess(String text){
+        return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
     }
 
     def createNewNet(String newIdentifier) {
@@ -270,8 +291,29 @@ class CustomActionDelegate extends ActionDelegate {
         petriNetService.save(newNet)
     }
 
-    def getNetName() {
-
+    def createNewDataSetLogic(int x, int y) {
+        DataFieldLogic dfl = new DataFieldLogic()
+        dfl.behavior = [FieldBehavior.VISIBLE]
+        dfl.events = [:]
+        DataEvent deg = new DataEvent()
+        deg.type = DataEventType.GET
+        deg.preActions = []
+        deg.postActions = []
+        dfl.events.put(DataEventType.GET, deg)
+        DataEvent seg = new DataEvent()
+        seg.type = DataEventType.GET
+        seg.preActions = []
+        seg.postActions = []
+        dfl.events.put(DataEventType.SET, seg)
+        FieldLayout fl = new FieldLayout()
+        fl.template = "material"
+        fl.appearance = "outline"
+        fl.rows = 1
+        fl.cols = 2
+        fl.x = x
+        fl.y = y
+        dfl.setLayout(fl)
+        return dfl
     }
 
     def test(Field register_map) {

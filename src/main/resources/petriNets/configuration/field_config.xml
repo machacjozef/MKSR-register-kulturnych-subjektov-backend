@@ -13,7 +13,7 @@
         <id>register_id</id>
         <title/>
     </data>
-    <data type="multichoice_map">
+    <data type="enumeration_map">
         <id>referenced_field</id>
         <title>Údaj</title>
         <component>
@@ -52,7 +52,7 @@
         <label/>
         <dataGroup>
             <id>field_reference_1</id>
-            <cols>4</cols>
+            <cols>8</cols>
             <layout>grid</layout>
             <dataRef>
                 <id>referenced_field</id>
@@ -63,7 +63,7 @@
                     <x>0</x>
                     <y>0</y>
                     <rows>1</rows>
-                    <cols>1</cols>
+                    <cols>3</cols>
                     <template>material</template>
                     <appearance>outline</appearance>
                 </layout>
@@ -74,7 +74,7 @@
                     <behavior>editable</behavior>
                 </logic>
                 <layout>
-                    <x>1</x>
+                    <x>3</x>
                     <y>0</y>
                     <rows>1</rows>
                     <cols>1</cols>
@@ -87,13 +87,16 @@
                         <action>
                             register_id: f.register_id;
 
-                            def configCase = workflowService.findOne(register_id.stringId)
-                            def configTask = configCase.tasks.find { it.transition == "register_config" }
+                            def configCase = workflowService.findOne(register_id.value)
+                            def configTask = configCase.tasks.find { it.transition == "register_config" }.task
 
-                            def taskValue = configCase.dataSet["field_refs_tasks"]
-                            def caseValue = configCase.dataSet["field_refs_cases"]
+                            def taskValue = configCase.dataSet["field_refs_tasks"].value
+                            def caseValue = configCase.dataSet["field_refs_cases"].value
 
-                            def index = caseValue.indexOf { it == useCase.stringId }
+                            def index = caseValue.indexOf(useCase.stringId)
+                            if (index == 0) {
+                                return
+                            }
                             taskValue.swap(index-1, index)
                             caseValue.swap(index-1, index)
 
@@ -109,7 +112,7 @@
                     <behavior>editable</behavior>
                 </logic>
                 <layout>
-                    <x>2</x>
+                    <x>4</x>
                     <y>0</y>
                     <rows>1</rows>
                     <cols>1</cols>
@@ -122,13 +125,16 @@
                         <action>
                             register_id: f.register_id;
 
-                            def configCase = workflowService.findOne(register_id.stringId)
-                            def configTask = configCase.tasks.find { it.transition == "register_config" }
+                            def configCase = workflowService.findOne(register_id.value)
+                            def configTask = configCase.tasks.find { it.transition == "register_config" }.task
 
-                            def taskValue = configCase.dataSet["field_refs_tasks"]
-                            def caseValue = configCase.dataSet["field_refs_cases"]
+                            def taskValue = configCase.dataSet["field_refs_tasks"].value
+                            def caseValue = configCase.dataSet["field_refs_cases"].value
 
-                            def index = caseValue.indexOf { it == useCase.stringId }
+                            def index = caseValue.indexOf(useCase.stringId)
+                            if (index == taskValue.size() - 1) {
+                                return
+                            }
                             taskValue.swap(index, index+1)
                             caseValue.swap(index, index+1)
 
@@ -144,7 +150,7 @@
                     <behavior>editable</behavior>
                 </logic>
                 <layout>
-                    <x>3</x>
+                    <x>5</x>
                     <y>0</y>
                     <rows>1</rows>
                     <cols>1</cols>
@@ -157,13 +163,13 @@
                         <action>
                             register_id: f.register_id;
 
-                            def configCase = workflowService.findOne(register_id.stringId)
-                            def configTask = configCase.tasks.find { it.transition == "register_config" }
+                            def configCase = workflowService.findOne(register_id.value)
+                            def configTask = configCase.tasks.find { it.transition == "register_config" }.task
 
-                            def taskValue = configCase.dataSet["field_refs_tasks"]
-                            def caseValue = configCase.dataSet["field_refs_cases"]
+                            def taskValue = configCase.dataSet["field_refs_tasks"].value
+                            def caseValue = configCase.dataSet["field_refs_cases"].value
 
-                            def index = caseValue.indexOf { it == useCase.stringId }
+                            def index = caseValue.indexOf(useCase.stringId)
                             taskValue.remove(index)
                             caseValue.remove(index)
 
