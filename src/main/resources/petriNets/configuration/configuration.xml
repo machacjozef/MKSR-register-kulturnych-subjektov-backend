@@ -658,11 +658,13 @@
                             def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
                             def subjectTransition = subjectNet.transitions.find { it.key == transition_switcher.value }.value
                             subjectTransition.dataSet = [:]
+                            subjectTransition.dataGroups[transition_switcher.value + "_0"].data = []
                             def x = 0
                             def y = 0
                             field_refs_cases.value.each { fieldCaseId ->
                                 def fieldCase = workflowService.findOne(fieldCaseId)
                                 subjectTransition.dataSet.put(fieldCase.dataSet["referenced_field"].value, createNewDataSetLogic(x, y))
+                                subjectTransition.dataGroups[transition_switcher.value + "_0"].data.add(fieldCase.dataSet["referenced_field"].value)
                                 y = x == 2 ? y + 1 : y
                                 x = x == 0 ? 2 : 0
                             }
@@ -683,7 +685,7 @@
                                 migrationHelper.updateCasesCursor({ def useCase ->
                                     migrationHelper.setPetriNet(useCase)
                                     taskService.reloadTasks(useCase)
-                                }, "subject" + newSuffix)
+                                }, "subject" + netSuffix)
                             }
                         </action>
                     </actions>

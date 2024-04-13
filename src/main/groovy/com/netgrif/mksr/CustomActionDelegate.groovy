@@ -285,12 +285,14 @@ class CustomActionDelegate extends ActionDelegate {
         dfl.behavior = [FieldBehavior.VISIBLE]
         dfl.events = [:]
         DataEvent deg = new DataEvent()
+        deg.id = new ObjectId()
         deg.type = DataEventType.GET
         deg.preActions = []
         deg.postActions = []
         dfl.events.put(DataEventType.GET, deg)
         DataEvent seg = new DataEvent()
-        seg.type = DataEventType.GET
+        seg.id = new ObjectId()
+        seg.type = DataEventType.SET
         seg.preActions = []
         seg.postActions = []
         dfl.events.put(DataEventType.SET, seg)
@@ -306,12 +308,12 @@ class CustomActionDelegate extends ActionDelegate {
     }
 
     PetriNet appendToNetNewField(PetriNet net, String id, String type) {
-        net.getDataSet().put(id.trim().toLowerCase(), buildField(type))
-        net.getDataSet().put(id.trim().toLowerCase() + "_tmp", buildField(type))
+        net.getDataSet().put(id.trim().toLowerCase(), buildField(type, id))
+        net.getDataSet().put(id.trim().toLowerCase() + "_tmp", buildField(type, id, true))
         return net
     }
 
-    def buildField(String type) {
+    def buildField(String type, String id, boolean suffix = false) {
         Field field
         switch (type) {
             case "boolean":
@@ -330,8 +332,15 @@ class CustomActionDelegate extends ActionDelegate {
                 break
             default:
                 field = new TextField("")
+                field.subType = "simple"
                 break
         }
+        field.name = new I18nString(id)
+        def importIdNew = id.trim().toLowerCase()
+        if (suffix) {
+            importIdNew = id.trim().toLowerCase()+"_tmp"
+        }
+        field.importId = importIdNew
         return field
     }
 
@@ -348,7 +357,7 @@ class CustomActionDelegate extends ActionDelegate {
         zoznam.each { it ->
             Case caze = workflowService.findOne(taskService.findOne(it).getCaseId())
             if (caze.dataSet.get("register_ids_clone").value == "new") {
-                importIdList.add(caze.dataSet.get("new_title").value as String)
+                importIdList.add(caze.dataSet.get("new_title").value.trim().toLowerCase() as String)
             } else {
                 importIdList.add(caze.dataSet.get("register_ids_clone").value as String)
             }

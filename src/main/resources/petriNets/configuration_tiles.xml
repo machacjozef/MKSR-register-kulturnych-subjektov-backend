@@ -32,6 +32,20 @@
                     setUriNodeData("/general", "General", null, "folder")
                     setUriNodeDataFilters("/general", ["general"])
                 </action>
+                <action>
+                    createOrUpdateMenuItem("configuration", "/configuration", "Case",
+                            "processIdentifier:\"configuration\"",
+                            "folder",
+                            "Konfigurácia registrov", ["configuration"])
+
+                    createOrUpdateMenuItem("import", "/configuration", "Case",
+                            "processIdentifier:\"import\"",
+                            "settings",
+                            "Import", ["import"])
+
+                    setUriNodeData("/configuration", "Konfigurácia", null, "folder")
+                    setUriNodeDataFilters("/configuration", ["configuration"])
+                </action>
             </actions>
         </event>
     </processEvents>

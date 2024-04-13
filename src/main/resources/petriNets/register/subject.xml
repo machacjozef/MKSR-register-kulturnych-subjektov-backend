@@ -183,11 +183,11 @@
 		<id>dynamic</id>
 		<x>420</x>
 		<y>220</y>
-		<label>Register</label>
+		<label>Register interny</label>
 		<icon>list</icon>
 		<dataGroup>
-			<id>form_register_galerie_0</id>
-			<cols>2</cols>
+			<id>dynamic_0</id>
+			<cols>4</cols>
 			<layout>grid</layout>
 			<dataRef>
 				<id>reg_cislo_tmp</id>
@@ -209,8 +209,8 @@
 					<behavior>editable</behavior>
 				</logic>
 				<layout>
-					<x>0</x>
-					<y>1</y>
+					<x>2</x>
+					<y>0</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -224,7 +224,7 @@
 				</logic>
 				<layout>
 					<x>0</x>
-					<y>2</y>
+					<y>1</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -237,8 +237,8 @@
 					<behavior>editable</behavior>
 				</logic>
 				<layout>
-					<x>0</x>
-					<y>3</y>
+					<x>2</x>
+					<y>1</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -252,7 +252,7 @@
 				</logic>
 				<layout>
 					<x>0</x>
-					<y>4</y>
+					<y>2</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -265,8 +265,8 @@
 					<behavior>editable</behavior>
 				</logic>
 				<layout>
-					<x>0</x>
-					<y>5</y>
+					<x>2</x>
+					<y>2</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -280,7 +280,7 @@
 				</logic>
 				<layout>
 					<x>0</x>
-					<y>6</y>
+					<y>3</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -293,8 +293,8 @@
 					<behavior>editable</behavior>
 				</logic>
 				<layout>
-					<x>0</x>
-					<y>7</y>
+					<x>2</x>
+					<y>3</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -308,7 +308,7 @@
 				</logic>
 				<layout>
 					<x>0</x>
-					<y>8</y>
+					<y>4</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -321,8 +321,8 @@
 					<behavior>editable</behavior>
 				</logic>
 				<layout>
-					<x>0</x>
-					<y>9</y>
+					<x>2</x>
+					<y>4</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -336,7 +336,7 @@
 				</logic>
 				<layout>
 					<x>0</x>
-					<y>10</y>
+					<y>5</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -349,8 +349,8 @@
 					<behavior>editable</behavior>
 				</logic>
 				<layout>
-					<x>0</x>
-					<y>11</y>
+					<x>2</x>
+					<y>5</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -364,7 +364,7 @@
 				</logic>
 				<layout>
 					<x>0</x>
-					<y>12</y>
+					<y>6</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -377,8 +377,8 @@
 					<behavior>editable</behavior>
 				</logic>
 				<layout>
-					<x>0</x>
-					<y>13</y>
+					<x>2</x>
+					<y>6</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -392,7 +392,7 @@
 				</logic>
 				<layout>
 					<x>0</x>
-					<y>14</y>
+					<y>7</y>
 					<rows>1</rows>
 					<cols>2</cols>
 					<template>material</template>
@@ -425,22 +425,23 @@
 		</event>
 		<event type="delegate">
 			<id>form_register_galerie_dynamic_delegate</id>
+			<title/>
 		</event>
 	</transition>
 	<transition>
 		<id>static</id>
 		<x>420</x>
 		<y>220</y>
-		<label>Register</label>
+		<label>Register externy</label>
 		<icon>list</icon>
 		<dataGroup>
-			<id>form_register_galerie_dynamic_0</id>
-			<cols>2</cols>
+			<id>static_0</id>
+			<cols>4</cols>
 			<layout>grid</layout>
 			<dataRef>
-				<id>reg_cislo_tmp</id>
+				<id>reg_cislo</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -452,9 +453,23 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>nazov_tmp</id>
+				<id>nazov</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>mesto</id>
+				<logic>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -466,9 +481,23 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>mesto_tmp</id>
+				<id>ulica_cislo</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>psc</id>
+				<logic>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -480,9 +509,23 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>ulica_cislo_tmp</id>
+				<id>telefon</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>fax</id>
+				<logic>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -494,9 +537,23 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>psc_tmp</id>
+				<id>email</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>web</id>
+				<logic>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -508,9 +565,23 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>telefon_tmp</id>
+				<id>ico</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>4</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>zriadovatel_zakladatel</id>
+				<logic>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -522,9 +593,23 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>fax_tmp</id>
+				<id>nazov_pravnickej_osoby_ktorej_je_galeria_organizacnym_utvarom</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>5</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>datum_registracie</id>
+				<logic>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -536,9 +621,23 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>email_tmp</id>
+				<id>zameranie_specializacia</id>
 				<logic>
-					<behavior>editable</behavior>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>2</x>
+					<y>6</y>
+					<rows>1</rows>
+					<cols>2</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>poznamka</id>
+				<logic>
+					<behavior>visible</behavior>
 				</logic>
 				<layout>
 					<x>0</x>
@@ -549,130 +648,22 @@
 					<appearance>outline</appearance>
 				</layout>
 			</dataRef>
-			<dataRef>
-				<id>web_tmp</id>
-				<logic>
-					<behavior>editable</behavior>
-				</logic>
-				<layout>
-					<x>0</x>
-					<y>8</y>
-					<rows>1</rows>
-					<cols>2</cols>
-					<template>material</template>
-					<appearance>outline</appearance>
-				</layout>
-			</dataRef>
-			<dataRef>
-				<id>ico_tmp</id>
-				<logic>
-					<behavior>editable</behavior>
-				</logic>
-				<layout>
-					<x>0</x>
-					<y>9</y>
-					<rows>1</rows>
-					<cols>2</cols>
-					<template>material</template>
-					<appearance>outline</appearance>
-				</layout>
-			</dataRef>
-			<dataRef>
-				<id>zriadovatel_zakladatel_tmp</id>
-				<logic>
-					<behavior>editable</behavior>
-				</logic>
-				<layout>
-					<x>0</x>
-					<y>10</y>
-					<rows>1</rows>
-					<cols>2</cols>
-					<template>material</template>
-					<appearance>outline</appearance>
-				</layout>
-			</dataRef>
-			<dataRef>
-				<id>nazov_pravnickej_osoby_ktorej_je_galeria_organizacnym_utvarom_tmp</id>
-				<logic>
-					<behavior>editable</behavior>
-				</logic>
-				<layout>
-					<x>0</x>
-					<y>11</y>
-					<rows>1</rows>
-					<cols>2</cols>
-					<template>material</template>
-					<appearance>outline</appearance>
-				</layout>
-			</dataRef>
-			<dataRef>
-				<id>datum_registracie_tmp</id>
-				<logic>
-					<behavior>editable</behavior>
-				</logic>
-				<layout>
-					<x>0</x>
-					<y>12</y>
-					<rows>1</rows>
-					<cols>2</cols>
-					<template>material</template>
-					<appearance>outline</appearance>
-				</layout>
-			</dataRef>
-			<dataRef>
-				<id>zameranie_specializacia_tmp</id>
-				<logic>
-					<behavior>editable</behavior>
-				</logic>
-				<layout>
-					<x>0</x>
-					<y>13</y>
-					<rows>1</rows>
-					<cols>2</cols>
-					<template>material</template>
-					<appearance>outline</appearance>
-				</layout>
-			</dataRef>
-			<dataRef>
-				<id>poznamka_tmp</id>
-				<logic>
-					<behavior>editable</behavior>
-				</logic>
-				<layout>
-					<x>0</x>
-					<y>14</y>
-					<rows>1</rows>
-					<cols>2</cols>
-					<template>material</template>
-					<appearance>outline</appearance>
-				</layout>
-			</dataRef>
 		</dataGroup>
 		<event type="assign">
 			<id>form_register_galerie_dynamic_assign</id>
-			<title>Edit</title>
-
+			<title/>
 		</event>
 		<event type="finish">
 			<id>form_register_galerie_dynamic_finish</id>
-			<title>Save</title>
-			<actions phase="pre">
-				<action>
-					saveChanges()
-				</action>
-			</actions>
+			<title/>
 		</event>
 		<event type="cancel">
 			<id>form_register_galerie_dynamic_cancel</id>
-			<title>Revert changes</title>
-			<actions phase="pre">
-				<action>
-					revertChanges()
-				</action>
-			</actions>
+			<title/>
 		</event>
 		<event type="delegate">
 			<id>form_register_galerie_dynamic_delegate</id>
+			<title/>
 		</event>
 	</transition>
 	<place>
@@ -778,6 +769,13 @@
 		<type>read</type>
 		<sourceId>p2</sourceId>
 		<destinationId>dynamic</destinationId>
+		<multiplicity>1</multiplicity>
+	</arc>
+	<arc>
+		<id>a17</id>
+		<type>read</type>
+		<sourceId>p2</sourceId>
+		<destinationId>static</destinationId>
 		<multiplicity>1</multiplicity>
 	</arc>
 </document>
