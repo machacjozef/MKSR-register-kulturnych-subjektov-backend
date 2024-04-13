@@ -78,9 +78,8 @@
 		<id>run</id>
 		<x>432</x>
 		<y>80</y>
-		<label/>
-		<assignPolicy>auto</assignPolicy>
-		<finishPolicy>auto_no_data</finishPolicy>
+		<label>[SYSTEN]</label>
+		<trigger type="auto"/>
 		<event type="assign">
 			<id>run</id>
 			<actions phase="post">
@@ -261,6 +260,7 @@
 		<x>656</x>
 		<y>80</y>
 		<label/>
+		<assignPolicy>auto</assignPolicy>
 		<dataGroup>
 			<id>import_0</id>
 			<cols>4</cols>
@@ -371,7 +371,6 @@
 		<y>80</y>
 		<label/>
 		<assignPolicy>auto</assignPolicy>
-		<finishPolicy>auto_no_data</finishPolicy>
 		<event type="assign">
 			<id>ass</id>
 			<actions phase="post">
