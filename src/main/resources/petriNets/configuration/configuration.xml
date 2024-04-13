@@ -229,7 +229,7 @@
 
                             createOrUpdateFolder(textPreprocess(new_sector.value), textPreprocess(new_sector.value))
 
-                            setUriNodeData("/" + textPreprocess(new_sector.value), new_sector.value, null, "prompt_suggestion")
+                            setUriNodeData("/" + textPreprocess(new_sector.value), new_sector.value, null, "folder")
 
                             change new_sector value { null }
                         </action>
@@ -721,7 +721,7 @@
 
                     change sector_map value { null }
                     def sectors = uriService.findByLevel(1)
-                    change sector_map options { sectors.collectEntries { [it._id.toString(), it.name] } }
+                    change sector_map options { sectors.findAll { it.uriPath != "/audit" &amp;&amp; it.uriPath != "/configuration" }.collectEntries { [it._id.toString(), it.name] } }
                 </action>
             </actions>
         </event>

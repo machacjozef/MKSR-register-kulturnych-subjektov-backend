@@ -13,26 +13,6 @@
 
             <actions phase="pre">
                 <action>
-                    createOrUpdateMenuItem("general", "/general", "Case",
-                            "NOT (processIdentifier:\"filter\" OR processIdentifier:\"import_filters\" OR " +
-                            "processIdentifier:\"export_filters\" OR processIdentifier:\"org_group\" OR " +
-                            "processIdentifier:\"impersonation_config\" OR " +
-                            "processIdentifier:\"impersonation_users_select\" OR " +
-                            "processIdentifier:\"configuration\" OR " +
-                            "processIdentifier:\"subject\" OR " +
-                            "processIdentifier:\"preference_filter_item\")",
-                            "folder",
-                            "All cases", ["configuration", "subject"])
-
-                    createOrUpdateMenuItem("general_system", "/general", "Case",
-                            "_exists_:processIdentifier",
-                            "settings",
-                            "All system cases", [])
-
-                    setUriNodeData("/general", "General", null, "folder")
-                    setUriNodeDataFilters("/general", ["general"])
-                </action>
-                <action>
                     createOrUpdateMenuItem("configuration", "/configuration", "Case",
                             "processIdentifier:\"configuration\"",
                             "folder",
@@ -43,7 +23,7 @@
                             "settings",
                             "Import", ["import"])
 
-                    setUriNodeData("/configuration", "Konfigurácia", null, "folder")
+                    setUriNodeData("/configuration", "Konfigurácia", null, "settings")
                     setUriNodeDataFilters("/configuration", ["configuration"])
                 </action>
             </actions>

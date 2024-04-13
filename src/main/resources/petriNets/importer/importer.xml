@@ -147,7 +147,7 @@
 
 							def sectors = uriService.findByLevel(1)
 							change sector_map value { null }
-							change sector_map options { sectors.collectEntries { [it._id.toString(), it.name] } }
+							change sector_map options { sectors.findAll { it.uriPath != "/audit" &amp;&amp; it.uriPath != "/configuration" }.collectEntries { [it._id.toString(), it.name] } }
 						</action>
 					</actions>
 				</event>
