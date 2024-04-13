@@ -670,7 +670,7 @@
 		<id>p2</id>
 		<x>368</x>
 		<y>80</y>
-		<tokens>0</tokens>
+		<tokens>1</tokens>
 		<static>false</static>
 	</place>
 	<place>
@@ -684,7 +684,7 @@
 		<id>p4</id>
 		<x>16</x>
 		<y>80</y>
-		<tokens>1</tokens>
+		<tokens>0</tokens>
 		<static>false</static>
 	</place>
 	<place>
