@@ -264,19 +264,6 @@ class CustomActionDelegate extends ActionDelegate {
         }, NetRunner.PetriNetEnum.SUBJECT.identifier)
     }
 
-    def revertChanges(){
-        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
-        fieldIds.each { fieldId ->
-            change useCase.getField(fieldId) value { useCase.dataSet.get(fieldId.replace("_tmp","")).getValue() }
-        }
-    }
-
-    def saveChanges(){
-        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
-        fieldIds.each { fieldId ->
-            change useCase.getField(fieldId.replace("_tmp","")) value { useCase.dataSet.get(fieldId).getValue() }
-        }
-    }
     String textPreprocess(String text){
         return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
     }
@@ -372,9 +359,10 @@ class CustomActionDelegate extends ActionDelegate {
             row.each { data -> {
                 int index = row.indexOf(data)
                 caze.dataSet[importIdList.get(index)].value = data
+                caze.dataSet[importIdList.get(index)+"_tmp"].value = data
                 }}
-            logy += "Pridavam zaznam: ${row} /n"
-            workflowService.save(caze)
+                logy += "Pridavam zaznam: ${row} \n"
+                workflowService.save(caze)
             }
         }
         return logy
@@ -501,9 +489,9 @@ class CustomActionDelegate extends ActionDelegate {
                 return cell.getStringCellValue()
             case CellType.NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString()
+                    return cell.getDateCellValue().toLocalDate().toString()
                 } else {
-                    return cell.getNumericCellValue().toString()
+                    return new BigDecimal(cell.getNumericCellValue()).toPlainString()
                 }
             case CellType.BOOLEAN:
                 return cell.getBooleanCellValue().toString()
