@@ -5,6 +5,7 @@ import com.netgrif.application.engine.auth.domain.IUser
 import com.netgrif.application.engine.auth.domain.LoggedUser
 import com.netgrif.application.engine.auth.domain.User
 import com.netgrif.application.engine.auth.domain.UserState
+import com.netgrif.application.engine.petrinet.domain.DataFieldLogic
 import com.netgrif.application.engine.petrinet.domain.I18nString
 import com.netgrif.application.engine.petrinet.domain.PetriNet
 import com.netgrif.application.engine.petrinet.domain.UriContentType
@@ -13,10 +14,14 @@ import com.netgrif.application.engine.petrinet.domain.dataset.BooleanField
 import com.netgrif.application.engine.petrinet.domain.dataset.DateField
 import com.netgrif.application.engine.petrinet.domain.dataset.DateTimeField
 import com.netgrif.application.engine.petrinet.domain.dataset.Field
+import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldBehavior
+import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldLayout
 import com.netgrif.application.engine.petrinet.domain.dataset.NumberField
 import com.netgrif.application.engine.petrinet.domain.dataset.TextField
 import com.netgrif.application.engine.petrinet.domain.dataset.UserFieldValue
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
+import com.netgrif.application.engine.petrinet.domain.events.DataEvent
+import com.netgrif.application.engine.petrinet.domain.events.DataEventType
 import com.netgrif.application.engine.petrinet.domain.roles.ProcessRole
 import com.netgrif.application.engine.startup.ImportHelper
 import com.netgrif.application.engine.petrinet.domain.version.Version
@@ -28,6 +33,7 @@ import com.netgrif.mksr.petrinet.domain.UriNodeDataRepository
 import com.netgrif.mksr.startup.NetRunner
 import org.apache.commons.lang3.StringUtils
 import org.bson.types.ObjectId
+import org.drools.core.util.LinkedList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -83,7 +89,8 @@ class CustomActionDelegate extends ActionDelegate {
     void createOrUpdateFolder(String id, String uri) {
         Case menuItem = findMenuItem(id)
         if (!menuItem) {
-            createUri(uri, UriContentType.DEFAULT)}
+            createUri(uri, UriContentType.DEFAULT)
+        }
     }
 
     private Map<String, I18nString> collectRolesForPreferenceItem(Map<String, String> roles) {
@@ -256,6 +263,20 @@ class CustomActionDelegate extends ActionDelegate {
             taskService.reloadTasks(useCase)
         }, NetRunner.PetriNetEnum.SUBJECT.identifier)
     }
+
+    def revertChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            change useCase.getField(fieldId) value { useCase.dataSet.get(fieldId.replace("_tmp","")).getValue() }
+        }
+    }
+
+    def saveChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            change useCase.getField(fieldId.replace("_tmp","")) value { useCase.dataSet.get(fieldId).getValue() }
+        }
+    }
     String textPreprocess(String text){
         return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
     }
@@ -272,22 +293,29 @@ class CustomActionDelegate extends ActionDelegate {
         petriNetService.save(newNet)
     }
 
-    def getNetName() {
-
-    }
-
-    def test(Field register_map) {
-        def netSuffix = register_map.value.replace("/", "_")
-        def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
-        def referencedFields = subjectNet.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
-        def subjectTransition = subjectNet.transitions.find { it.key == "dynamic" }.value
-        subjectTransition.dataSet.each { field ->
-            def fieldRefCase = createCase("field_config")
-            def fieldRefTask = fieldRefCase.tasks[0].task
-            change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
-            change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
-            change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
-        }
+    def createNewDataSetLogic(int x, int y) {
+        DataFieldLogic dfl = new DataFieldLogic()
+        dfl.behavior = [FieldBehavior.VISIBLE]
+        dfl.events = [:]
+        DataEvent deg = new DataEvent()
+        deg.type = DataEventType.GET
+        deg.preActions = []
+        deg.postActions = []
+        dfl.events.put(DataEventType.GET, deg)
+        DataEvent seg = new DataEvent()
+        seg.type = DataEventType.GET
+        seg.preActions = []
+        seg.postActions = []
+        dfl.events.put(DataEventType.SET, seg)
+        FieldLayout fl = new FieldLayout()
+        fl.template = "material"
+        fl.appearance = "outline"
+        fl.rows = 1
+        fl.cols = 2
+        fl.x = x
+        fl.y = y
+        dfl.setLayout(fl)
+        return dfl
     }
 
     PetriNet appendToNetNewField(PetriNet net, String id, String type) {
@@ -321,16 +349,35 @@ class CustomActionDelegate extends ActionDelegate {
     }
 
 
-
-
-    String importData(def net, def field, def zoznam) {
+    String importData(PetriNet net, def field, def zoznam) {
+        String logy = ""
         def excelData = loadDataBasedOnFileExtension(field.value.name, field.value.path, false)
 
         if (excelData == null) {
             throw new IllegalArgumentException("Zly format")
         }
-        return ""
 
+        def importIdList = []
+        zoznam.each { it ->
+            Case caze = workflowService.findOne(taskService.findOne(it).getCaseId())
+            if (caze.dataSet.get("register_ids_clone").value == "new") {
+                importIdList.add(caze.dataSet.get("new_title").value as String)
+            } else {
+                importIdList.add(caze.dataSet.get("register_ids_clone").value as String)
+            }
+        }
+
+        excelData.data.each { row -> {
+            Case caze = createCase(net.identifier)
+            row.each { data -> {
+                int index = row.indexOf(data)
+                caze.dataSet[importIdList.get(index)].value = data
+                }}
+            logy += "Pridavam zaznam: ${row} /n"
+            workflowService.save(caze)
+            }
+        }
+        return logy
     }
 
 
@@ -517,10 +564,10 @@ class CustomActionDelegate extends ActionDelegate {
         return zhodneZnaky / mensiaDlzka.toDouble()
     }
 
-    def generateDataField(PetriNet netValue, def zoznam){
-        zoznam.each{it ->
+    def generateDataField(PetriNet netValue, def zoznam) {
+        zoznam.each { it ->
             Case caze = workflowService.findOne(taskService.findOne(it).getCaseId())
-            if(caze.dataSet.get("register_ids_clone").value  == "new"){
+            if (caze.dataSet.get("register_ids_clone").value == "new") {
                 netValue = appendToNetNewField(netValue, caze.dataSet.get("new_title").value, caze.dataSet.get("new_type").value)
             }
         }

@@ -7,7 +7,16 @@
     <anonymousRole>false</anonymousRole>
     <transitionRole>false</transitionRole>
     <caseName>Konfigurácia</caseName>
-
+    <processEvents>
+		<event type="upload">
+			<id>upload</id>
+			<actions phase="post">
+				<action>
+					createCase("configuration")
+				</action>
+			</actions>
+		</event>
+	</processEvents>
 
     <data type="enumeration_map">
         <id>sector_map</id>
@@ -37,6 +46,9 @@
     <data type="caseRef">
         <id>field_refs_cases</id>
         <title/>
+        <allowedNets>
+            <allowedNet>field_config</allowedNet>
+        </allowedNets>
     </data>
     <data type="button">
         <id>add_field</id>
@@ -99,6 +111,30 @@
 			<name>icon</name>
 		</component>
 	</data>
+    <data type="enumeration_map">
+		<id>transition_switcher</id>
+		<title>Výber zobrazenia</title>
+		<options>
+			<option key="dynamic">Interná</option>
+			<option key="static">Verejná</option>
+		</options>
+		<init>dynamic</init>
+    </data>
+
+    <data type="i18n">
+        <id>line_divider</id>
+        <title/>
+        <component>
+            <name>divider</name>
+        </component>
+    </data>
+    <data type="i18n">
+        <id>line_divider2</id>
+        <title/>
+        <component>
+            <name>divider</name>
+        </component>
+    </data>
     <transition>
         <id>os_config</id>
         <x>100</x>
@@ -353,25 +389,28 @@
                     <template>material</template>
                     <appearance>outline</appearance>
                 </layout>
-                <event type="get">
-                    <id>sector_map_get</id>
-                    <actions phase="pre">
-                        <action>
-                            sector_map: f.sector_map;
-
-                            def sectors = uriService.findByLevel(1)
-                            change sector_map value { null }
-                            change sector_map options { sectors.collectEntries { [it._id.toString(), it.name] } }
-                        </action>
-                    </actions>
-                </event>
                 <event type="set">
                     <id>sector_map_set</id>
                     <actions phase="post">
                         <action>
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases,
                             sector_map: f.sector_map,
                             register_map: f.register_map;
 
+                            if (sector_map.value == null) {
+                                return
+                            }
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
                             def sector = uriService.findById(sector_map.value)
                             def fullQuery = "processIdentifier:preference_item AND uriNodeId:${sector._id.toString()}"
                             def registerCases = findCasesElastic(fullQuery, org.springframework.data.domain.PageRequest.of(0, 100))
@@ -394,14 +433,57 @@
                     <template>material</template>
                     <appearance>outline</appearance>
                 </layout>
-                <event type="get">
-                    <id>register_map_get</id>
+                <event type="set">
+                    <id>register_map_set</id>
                     <actions phase="post">
                         <action>
-                            register_map: f.register_map;
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases;
 
-                            change register_map value { [] }
-                            change register_map options { [:] }
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>transition_switcher</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>1</y>
+                    <rows>1</rows>
+                    <cols>2</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>transition_switcher_set</id>
+                    <actions phase="post">
+                        <action>
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases;
+
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
                         </action>
                     </actions>
                 </event>
@@ -425,7 +507,8 @@
                         <action>
                             register_map: f.register_map,
                             field_refs_tasks: f.field_refs_tasks,
-                            field_refs_cases: f.field_refs_cases;
+                            field_refs_cases: f.field_refs_cases,
+                            transition_switcher: f.transition_switcher;
 
                             if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
                                 def toDelete = field_refs_cases.value.collect()
@@ -438,21 +521,44 @@
                                 change field_refs_cases value { [] }
                             }
 
-//                            test(register_map)
+                            if (register_map.value == null || register_map.value == "") {
+                                throw new IllegalArgumentException("Nebola vybraná hodnota registra")
+                            }
+
                             def netSuffix = register_map.value.replace("/", "_")
                             def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
-                            def referencedFields = subjectNet.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
-                            def subjectTransition = subjectNet.transitions.find { it.key == "dynamic" }.value
+                            def referencedFields = subjectNet.dataSet.findAll { transition_switcher.value == "static" ? !it.key.endsWith("_tmp") : it.key.endsWith("_tmp") }.collectEntries { [it.key, it.value.name.defaultValue] }
+                            def subjectTransition = subjectNet.transitions.find { it.key == transition_switcher.value }.value
+                            def fieldTasks = []
+                            def fieldCases = []
                             subjectTransition.dataSet.each { field ->
                                 def fieldRefCase = createCase("field_config")
                                 def fieldRefTask = fieldRefCase.tasks[0].task
+                                fieldTasks.add(fieldRefTask)
+                                fieldCases.add(fieldRefCase.stringId)
                                 change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
                                 change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
                                 change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
                             }
+                            change field_refs_tasks value { fieldTasks }
+                            change field_refs_cases value { fieldCases }
                         </action>
                     </actions>
                 </event>
+            </dataRef>
+            <dataRef>
+                <id>line_divider</id>
+                <logic>
+                    <behavior>visible</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>2</y>
+                    <rows>1</rows>
+                    <cols>4</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
             </dataRef>
             <dataRef>
                 <id>field_refs_tasks</id>
@@ -461,7 +567,7 @@
                 </logic>
                 <layout>
                     <x>0</x>
-                    <y>2</y>
+                    <y>3</y>
                     <rows>1</rows>
                     <cols>1</cols>
                     <template>material</template>
@@ -475,7 +581,7 @@
                 </logic>
                 <layout>
                     <x>3</x>
-                    <y>3</y>
+                    <y>4</y>
                     <rows>1</rows>
                     <cols>1</cols>
                     <template>material</template>
@@ -487,12 +593,12 @@
                         <action>
                             register_map: f.register_map,
                             field_refs_tasks: f.field_refs_tasks,
-                            field_refs_cases: f.field_refs_cases;
-
+                            field_refs_cases: f.field_refs_cases,
+                            transition_switcher: f.transition_switcher;
 
                             def netSuffix = register_map.value.replace("/", "_")
                             def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
-                            def referencedFields = subjectNet.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
+                            def referencedFields = subjectNet.dataSet.findAll { transition_switcher.value == "static" ? !it.key.endsWith("_tmp") : it.key.endsWith("_tmp") }.collectEntries { [it.key, it.value.name.defaultValue] }
 
                             def fieldRefCase = createCase("field_config")
                             def fieldRefTask = fieldRefCase.tasks[0].task
@@ -508,13 +614,27 @@
                 </event>
             </dataRef>
             <dataRef>
+                <id>line_divider2</id>
+                <logic>
+                    <behavior>visible</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>5</y>
+                    <rows>1</rows>
+                    <cols>4</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+            </dataRef>
+            <dataRef>
                 <id>save_register</id>
                 <logic>
                     <behavior>editable</behavior>
                 </logic>
                 <layout>
                     <x>3</x>
-                    <y>4</y>
+                    <y>6</y>
                     <rows>1</rows>
                     <cols>1</cols>
                     <template>material</template>
@@ -524,7 +644,47 @@
                     <id>save_register_set</id>
                     <actions phase="post">
                         <action>
+                            register_map: f.register_map,
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases,
+                            transition_switcher: f.transition_switcher,
+                            sector_map: f.sector_map;
 
+                            if (register_map.value == null || register_map.value == "") {
+                                throw new IllegalArgumentException("Nebola vybraná hodnota registra")
+                            }
+
+                            def netSuffix = register_map.value.replace("/", "_")
+                            def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+                            def subjectTransition = subjectNet.transitions.find { it.key == transition_switcher.value }.value
+                            subjectTransition.dataSet = [:]
+                            def x = 0
+                            def y = 0
+                            field_refs_cases.value.each { fieldCaseId ->
+                                def fieldCase = workflowService.findOne(fieldCaseId)
+                                subjectTransition.dataSet.put(fieldCase.dataSet["referenced_field"].value, createNewDataSetLogic(x, y))
+                                y = x == 2 ? y + 1 : y
+                                x = x == 0 ? 2 : 0
+                            }
+                            petriNetService.save(subjectNet)
+
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
+
+                            async.run {
+                                migrationHelper.updateCasesCursor({ def useCase ->
+                                    migrationHelper.setPetriNet(useCase)
+                                    taskService.reloadTasks(useCase)
+                                }, "subject" + newSuffix)
+                            }
                         </action>
                     </actions>
                 </event>
@@ -532,6 +692,36 @@
         </dataGroup>
         <event type="assign">
             <id>register_config_assign</id>
+            <actions phase="pre">
+                <action>
+                    field_refs_cases: f.field_refs_cases,
+                    field_refs_tasks: f.field_refs_tasks;
+
+                    if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                        def toDelete = field_refs_cases.value.collect()
+                        async.run {
+                            toDelete.each {
+                                workflowService.deleteCase(it)
+                            }
+                        }
+                        change field_refs_tasks value { [] }
+                        change field_refs_cases value { [] }
+                    }
+                </action>
+                <action>
+                    register_map: f.register_map;
+
+                    change register_map value { null }
+                    change register_map options { [:] }
+                </action>
+                <action>
+                    sector_map: f.sector_map;
+
+                    change sector_map value { null }
+                    def sectors = uriService.findByLevel(1)
+                    change sector_map options { sectors.collectEntries { [it._id.toString(), it.name] } }
+                </action>
+            </actions>
         </event>
         <event type="finish">
             <id>register_config_finish</id>
