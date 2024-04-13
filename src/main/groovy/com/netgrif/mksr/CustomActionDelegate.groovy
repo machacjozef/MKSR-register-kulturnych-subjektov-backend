@@ -249,6 +249,20 @@ class CustomActionDelegate extends ActionDelegate {
             taskService.reloadTasks(useCase)
         }, NetRunner.PetriNetEnum.SUBJECT.identifier)
     }
+
+    def revertChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            change useCase.getField(fieldId) value { useCase.dataSet.get(fieldId.replace("_tmp","")).getValue() }
+        }
+    }
+
+    def saveChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            change useCase.getField(fieldId.replace("_tmp","")) value { useCase.dataSet.get(fieldId).getValue() }
+        }
+    }
     String textPreprocess(String text){
         return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
     }
