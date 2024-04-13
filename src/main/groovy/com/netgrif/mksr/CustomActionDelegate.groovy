@@ -2,6 +2,7 @@ package com.netgrif.mksr
 
 import com.netgrif.application.engine.auth.domain.Authority
 import com.netgrif.application.engine.auth.domain.IUser
+import com.netgrif.application.engine.auth.domain.LoggedUser
 import com.netgrif.application.engine.auth.domain.User
 import com.netgrif.application.engine.auth.domain.UserState
 import com.netgrif.application.engine.petrinet.domain.DataFieldLogic
@@ -17,6 +18,7 @@ import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldBehavio
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.FieldLayout
 import com.netgrif.application.engine.petrinet.domain.dataset.NumberField
 import com.netgrif.application.engine.petrinet.domain.dataset.TextField
+import com.netgrif.application.engine.petrinet.domain.dataset.UserFieldValue
 import com.netgrif.application.engine.petrinet.domain.dataset.logic.action.ActionDelegate
 import com.netgrif.application.engine.petrinet.domain.events.DataEvent
 import com.netgrif.application.engine.petrinet.domain.events.DataEventType
@@ -33,10 +35,13 @@ import org.apache.commons.lang3.StringUtils
 import org.bson.types.ObjectId
 import org.drools.core.util.LinkedList
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.*
 
+
+import java.time.LocalDateTime
 
 @Component
 class CustomActionDelegate extends ActionDelegate {
@@ -243,13 +248,13 @@ class CustomActionDelegate extends ActionDelegate {
                 processRoles: [] as Set<ProcessRole>))
     }
 
-    def addFieldToSubject(String fieldId, def value) {
+    def addFieldToSubject(String fieldId,String netIdentifier, def value) {
         migrationHelper.updateCasesCursor({ Case useCase ->
             useCase.dataSet.put(fieldId, new DataField(value))
-            useCase.immediateData(fieldId)
+            useCase.immediateDataFields.add(fieldId)
             useCase.dataSet.put(fieldId + "_tmp", new DataField(value))
             migrationHelper.elasticIndex(useCase)
-        }, NetRunner.PetriNetEnum.SUBJECT.identifier)
+        }, netIdentifier)
     }
 
     def reloadTasksOnSubject() {
@@ -571,4 +576,39 @@ class CustomActionDelegate extends ActionDelegate {
     }
 
 
+
+    def revertChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            change useCase.getField(fieldId) value { useCase.dataSet.get(fieldId.replace("_tmp","")).getValue() }
+        }
+    }
+
+    def saveChanges(){
+        List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
+        fieldIds.each { fieldId ->
+            if(useCase.dataSet.get(fieldId.replace("_tmp","")).getValue() == useCase.dataSet.get(fieldId).getValue()){
+                return
+            }
+            createAuditCase(
+                    "Change from :" + useCase.dataSet.get(fieldId.replace("_tmp","")).value + " to " + useCase.dataSet.get(fieldId).getValue(),
+                    useCase.stringId,
+                    fieldId.replace("_tmp",""),
+                    loggedUser(),
+                    LocalDateTime.now()
+            )
+            change useCase.getField(fieldId.replace("_tmp","")) value { useCase.dataSet.get(fieldId).getValue() }
+        }
+    }
+
+    @Async
+    def createAuditCase(String detail, String idOfSubject, String fieldId, IUser person, LocalDateTime timeOfChange ){
+        Case auditCase = createCase("audit")
+        auditCase.dataSet.get("id_of_subject").value = idOfSubject
+        auditCase.dataSet.get("field_id").value = fieldId
+        auditCase.dataSet.get("person").value = new UserFieldValue(userService.findById(person.getStringId(),false))
+        auditCase.dataSet.get("detail").value = detail
+        auditCase.dataSet.get("time_of_change").value = timeOfChange
+        workflowService.save(auditCase)
+    }
 }

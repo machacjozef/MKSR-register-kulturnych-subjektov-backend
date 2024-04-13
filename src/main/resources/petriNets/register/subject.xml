@@ -137,7 +137,6 @@
 		<component>
 			<name>textarea</name>
 		</component>
-		<init>Hallllo</init>
 	</data>
 	<data type="text">
 		<id>poznamka_tmp</id>
@@ -402,16 +401,30 @@
 			</dataRef>
 		</dataGroup>
 		<event type="assign">
-			<id>form_register_galerie_assign</id>
+			<id>form_register_galerie_dynamic_assign</id>
+			<title>Edit</title>
+
 		</event>
 		<event type="finish">
-			<id>form_register_galerie_finish</id>
+			<id>form_register_galerie_dynamic_finish</id>
+			<title>Save</title>
+			<actions phase="pre">
+				<action>
+					saveChanges()
+				</action>
+			</actions>
 		</event>
 		<event type="cancel">
-			<id>form_register_galerie_cancel</id>
+			<id>form_register_galerie_dynamic_cancel</id>
+			<title>Revert changes</title>
+			<actions phase="pre">
+				<action>
+					revertChanges()
+				</action>
+			</actions>
 		</event>
 		<event type="delegate">
-			<id>form_register_galerie_delegate</id>
+			<id>form_register_galerie_dynamic_delegate</id>
 		</event>
 	</transition>
 	<transition>
