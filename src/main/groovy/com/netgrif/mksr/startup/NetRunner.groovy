@@ -38,7 +38,11 @@ class NetRunner extends AbstractOrderedCommandLineRunner {
         CONFIGURATION_TILES("configuration_tiles.xml", "configuration_tiles"),
         SUBJECT("register/subject.xml", "subject"),
         CONFIGURATION_NET("configuration/configuration.xml", "configuration"),
-        FIELD_NET("configuration/field_config.xml", "field_config")
+        FIELD_NET("configuration/field_config.xml", "field_config"),
+
+        IMPORT("importer/importer.xml", "import"),
+        IMPORT_MAPPER("importer/importMapper.xml", "importMapper"),
+
 
 
         public final String file

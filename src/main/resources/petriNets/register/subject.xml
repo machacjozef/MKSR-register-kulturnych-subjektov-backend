@@ -28,12 +28,12 @@
 		<title>Reg. číslo</title>
 	</data>
 	<data type="text" immediate="true">
-		<id>nazov_galerie</id>
-		<title>Názov galérie</title>
+		<id>nazov</id>
+		<title>Názov</title>
 	</data>
 	<data type="text">
-		<id>nazov_galerie_tmp</id>
-		<title>Názov galérie</title>
+		<id>nazov_tmp</id>
+		<title>Názov</title>
 	</data>
 	<data type="text" immediate="true">
 		<id>mesto</id>
@@ -84,12 +84,12 @@
 		<title>Email</title>
 	</data>
 	<data type="text" immediate="true">
-		<id>webove_sidlo</id>
-		<title>Webové sídlo</title>
+		<id>web</id>
+		<title>Webové stránka</title>
 	</data>
 	<data type="text">
-		<id>webove_sidlo_tmp</id>
-		<title>Webové sídlo</title>
+		<id>web_tmp</id>
+		<title>Webové stránka</title>
 	</data>
 	<data type="text" immediate="true">
 		<id>ico</id>
@@ -124,12 +124,12 @@
 		<title>Dátum registrácie</title>
 	</data>
 	<data type="text" immediate="true">
-		<id>zameranie_specializacia_galerie</id>
-		<title>Zameranie, špecializácia galérie</title>
+		<id>zameranie_specializacia</id>
+		<title>Zameranie</title>
 	</data>
 	<data type="text">
-		<id>zameranie_specializacia_galerie_tmp</id>
-		<title>Zameranie, špecializácia galérie</title>
+		<id>zameranie_specializacia_tmp</id>
+		<title>Zameranie</title>
 	</data>
 	<data type="text" immediate="true">
 		<id>poznamka</id>
@@ -205,7 +205,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>nazov_galerie_tmp</id>
+				<id>nazov_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -303,7 +303,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>webove_sidlo_tmp</id>
+				<id>web_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -373,7 +373,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>zameranie_specializacia_galerie_tmp</id>
+				<id>zameranie_specializacia_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -439,7 +439,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>nazov_galerie_tmp</id>
+				<id>nazov_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -537,7 +537,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>webove_sidlo_tmp</id>
+				<id>web_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -607,7 +607,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>zameranie_specializacia_galerie_tmp</id>
+				<id>zameranie_specializacia_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
