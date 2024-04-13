@@ -13,7 +13,7 @@
 			<id>tt</id>
 			<actions phase="post">
 				<action>
-					createCase("import", "aaaa")
+					createCase("import", "Import dát")
 				</action>
 			</actions>
 		</event>
