@@ -7,20 +7,350 @@
     <anonymousRole>false</anonymousRole>
     <transitionRole>false</transitionRole>
     <caseName>Konfigurácia</caseName>
+    <processEvents>
+		<event type="upload">
+			<id>upload</id>
+			<actions phase="post">
+				<action>
+					createCase("configuration")
+				</action>
+			</actions>
+		</event>
+	</processEvents>
 
+    <data type="enumeration_map">
+        <id>sector_map</id>
+        <title>Sektor</title>
+        <component>
+            <name>autocomplete</name>
+            <property key="filter">substring</property>
+        </component>
+    </data>
+    <data type="enumeration_map">
+        <id>register_map</id>
+        <title>Register</title>
+        <component>
+            <name>autocomplete</name>
+            <property key="filter">substring</property>
+        </component>
+    </data>
+    <data type="button">
+        <id>select_register_btn</id>
+        <title/>
+        <placeholder>Vybrať register</placeholder>
+    </data>
+    <data type="taskRef">
+        <id>field_refs_tasks</id>
+        <title/>
+    </data>
+    <data type="caseRef">
+        <id>field_refs_cases</id>
+        <title/>
+        <allowedNets>
+            <allowedNet>field_config</allowedNet>
+        </allowedNets>
+    </data>
+    <data type="button">
+        <id>add_field</id>
+        <title/>
+        <placeholder>add</placeholder>
+        <component>
+            <name>icon</name>
+        </component>
+    </data>
+    <data type="button">
+        <id>save_register</id>
+        <title/>
+        <placeholder>Uložiť register</placeholder>
+    </data>
+	<data type="text">
+		<id>new_sector</id>
+		<title>Nový sektor</title>
+	</data>
+	<data type="enumeration_map">
+		<id>sectors</id>
+		<title>Sektory</title>
+	</data>
+	<data type="text">
+		<id>new_register</id>
+		<title>Nový register</title>
+	</data>
+	<data type="multichoice_map">
+		<id>registers</id>
+		<title>Registre</title>
+	</data>
+	<data type="button">
+		<id>add_sector</id>
+		<title/>
+		<placeholder>add</placeholder>
+		<component>
+			<name>icon</name>
+		</component>
+	</data>
+	<data type="button">
+		<id>remove_sectors</id>
+		<title/>
+		<placeholder>remove</placeholder>
+		<component>
+			<name>icon</name>
+		</component>
+	</data>
+	<data type="button">
+		<id>add_register</id>
+		<title/>
+		<placeholder>add</placeholder>
+		<component>
+			<name>icon</name>
+		</component>
+	</data>
+	<data type="button">
+		<id>remove_registers</id>
+		<title/>
+		<placeholder>remove</placeholder>
+		<component>
+			<name>icon</name>
+		</component>
+	</data>
+    <data type="enumeration_map">
+		<id>transition_switcher</id>
+		<title>Výber zobrazenia</title>
+		<options>
+			<option key="dynamic">Interná</option>
+			<option key="static">Verejná</option>
+		</options>
+		<init>dynamic</init>
+    </data>
 
+    <data type="i18n">
+        <id>line_divider</id>
+        <title/>
+        <component>
+            <name>divider</name>
+        </component>
+    </data>
+    <data type="i18n">
+        <id>line_divider2</id>
+        <title/>
+        <component>
+            <name>divider</name>
+        </component>
+    </data>
     <transition>
         <id>os_config</id>
         <x>100</x>
         <y>100</y>
         <label>Konfigurácia štruktúry</label>
+		<assignPolicy>auto</assignPolicy>
         <dataGroup>
-            <id>os_config_1</id>
+			<id>os_config_0</id>
             <cols>4</cols>
             <layout>grid</layout>
             <dataRef>
-                <id></id>
-                <logic></logic>
+				<id>sectors</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>3</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>new_sector</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>3</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>new_register</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>3</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>registers</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>0</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>3</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+			</dataRef>
+			<dataRef>
+				<id>add_sector</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>3</x>
+					<y>0</y>
+					<rows>1</rows>
+					<cols>1</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+				<event type="set">
+					<id>add_sector_set</id>
+					<actions phase="post">
+						<action id="1">
+                            sectors: f.sectors,
+                            new_sector: f.new_sector;
+
+                            if (!new_sector.value) {
+                                throw new IllegalArgumentException("Nevyplnili ste hodnotu nového sektoru.")
+                            }
+
+                            change sectors options { sectors.options.plus([(new_sector.value): (new_sector.value)]) }
+
+                            createOrUpdateFolder(textPreprocess(new_sector.value), textPreprocess(new_sector.value))
+
+                            setUriNodeData("/" + textPreprocess(new_sector.value), new_sector.value, null, "prompt_suggestion")
+
+                            change new_sector value { null }
+                        </action>
+					</actions>
+				</event>
+			</dataRef>
+			<dataRef>
+				<id>remove_sectors</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>3</x>
+					<y>1</y>
+					<rows>1</rows>
+					<cols>1</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+				<event type="set">
+					<id>remove_sectors_set</id>
+					<actions phase="post">
+                        <action id="2">
+                            sectors: f.sectors;
+
+                            if (!sectors.value) {
+                                return
+                            }
+
+                            def newOptions = sectors.options
+                            sectors.value.each {
+                                newOptions = newOptions.remove(it)
+                            }
+
+                            change sectors options { newOptions }
+                            change sectors value { null }
+                        </action>
+					</actions>
+				</event>
+			</dataRef>
+			<dataRef>
+				<id>add_register</id>
+				<logic>
+					<behavior>editable</behavior>
+				</logic>
+				<layout>
+					<x>3</x>
+					<y>2</y>
+					<rows>1</rows>
+					<cols>1</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+				<event type="set">
+					<id>add_register_set</id>
+					<actions phase="post">
+						<action id="3">
+                            registers: f.registers,
+                            sectors: f.sectors,
+                            new_register: f.new_register;
+
+                            if (!new_register.value) {
+                                throw new IllegalArgumentException("Nevyplnili ste hodnotu nového registra.")
+                            }
+
+                            if (!sectors.value) {
+                                throw new IllegalArgumentException("Nie je vybraný sektor.")
+                            }
+
+                            change registers options { registers.options.plus([(new_register.value): (new_register.value)]) }
+
+                            def newIdentifier = "subject_" + textPreprocess(sectors.value.toString()) + "_" + textPreprocess(new_register.value)
+
+                            createNewNet(newIdentifier)
+
+                            createOrUpdateMenuItem(textPreprocess(new_register.value),
+                                    ("/" + textPreprocess(sectors.value.toString())),
+                                    "Case",
+                                    "processIdentifier:\"" + newIdentifier + "\"",
+                                    "settings",
+                                    new_register.value,
+                                    [newIdentifier])
+
+                            change new_register value { null }
+						</action>
+					</actions>
+				</event>
+			</dataRef>
+			<dataRef>
+				<id>remove_registers</id>
+				<logic>
+					<behavior>visible</behavior>
+				</logic>
+				<layout>
+					<x>3</x>
+					<y>3</y>
+					<rows>1</rows>
+					<cols>1</cols>
+					<template>material</template>
+					<appearance>outline</appearance>
+				</layout>
+				<event type="set">
+					<id>remove_registers_set</id>
+					<actions phase="post">
+						<action id="4">
+                            registers: f.registers;
+
+                            if (!registers.value) {
+                                return
+                            }
+
+                            def newOptions = registers.options
+                            registers.value.each {
+                                newOptions = newOptions.remove(it.toString())
+                            }
+
+                            change registers options { newOptions }
+                            change registers value { null }
+                        </action>
+					</actions>
+				</event>
             </dataRef>
         </dataGroup>
         <event type="assign">
@@ -38,29 +368,372 @@
     </transition>
     <transition>
         <id>register_config</id>
-        <x>200</x>
+		<x>340</x>
         <y>100</y>
         <label>Konfigurácia registrov</label>
+        <assignPolicy>auto</assignPolicy>
         <dataGroup>
             <id>register_config_1</id>
             <cols>4</cols>
             <layout>grid</layout>
             <dataRef>
-                <id></id>
-                <logic></logic>
+                <id>sector_map</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>0</y>
+                    <rows>1</rows>
+                    <cols>2</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>sector_map_set</id>
+                    <actions phase="post">
+                        <action>
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases,
+                            sector_map: f.sector_map,
+                            register_map: f.register_map;
+
+                            if (sector_map.value == null) {
+                                return
+                            }
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
+                            def sector = uriService.findById(sector_map.value)
+                            def fullQuery = "processIdentifier:preference_item AND uriNodeId:${sector._id.toString()}"
+                            def registerCases = findCasesElastic(fullQuery, org.springframework.data.domain.PageRequest.of(0, 100))
+                            change register_map value { null }
+                            change register_map options { registerCases.collectEntries { [it.dataSet["nodePath"].value, it.dataSet["menu_name"].value.defaultValue] } }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>register_map</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>2</x>
+                    <y>0</y>
+                    <rows>1</rows>
+                    <cols>2</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>register_map_set</id>
+                    <actions phase="post">
+                        <action>
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases;
+
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>transition_switcher</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>1</y>
+                    <rows>1</rows>
+                    <cols>2</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>transition_switcher_set</id>
+                    <actions phase="post">
+                        <action>
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases;
+
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>select_register_btn</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>3</x>
+                    <y>1</y>
+                    <rows>1</rows>
+                    <cols>1</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>select_register_btn_set</id>
+                    <actions phase="post">
+                        <action>
+                            register_map: f.register_map,
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases,
+                            transition_switcher: f.transition_switcher;
+
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
+
+                            if (register_map.value == null || register_map.value == "") {
+                                throw new IllegalArgumentException("Nebola vybraná hodnota registra")
+                            }
+
+                            def netSuffix = register_map.value.replace("/", "_")
+                            def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+                            def referencedFields = subjectNet.dataSet.findAll { transition_switcher.value == "static" ? !it.key.endsWith("_tmp") : it.key.endsWith("_tmp") }.collectEntries { [it.key, it.value.name.defaultValue] }
+                            def subjectTransition = subjectNet.transitions.find { it.key == transition_switcher.value }.value
+                            def fieldTasks = []
+                            def fieldCases = []
+                            subjectTransition.dataSet.each { field ->
+                                def fieldRefCase = createCase("field_config")
+                                def fieldRefTask = fieldRefCase.tasks[0].task
+                                fieldTasks.add(fieldRefTask)
+                                fieldCases.add(fieldRefCase.stringId)
+                                change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
+                                change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
+                                change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
+                            }
+                            change field_refs_tasks value { fieldTasks }
+                            change field_refs_cases value { fieldCases }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>line_divider</id>
+                <logic>
+                    <behavior>visible</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>2</y>
+                    <rows>1</rows>
+                    <cols>4</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+            </dataRef>
+            <dataRef>
+                <id>field_refs_tasks</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>3</y>
+                    <rows>1</rows>
+                    <cols>1</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+            </dataRef>
+            <dataRef>
+                <id>add_field</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>3</x>
+                    <y>4</y>
+                    <rows>1</rows>
+                    <cols>1</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>add_field_set</id>
+                    <actions phase="post">
+                        <action>
+                            register_map: f.register_map,
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases,
+                            transition_switcher: f.transition_switcher;
+
+                            def netSuffix = register_map.value.replace("/", "_")
+                            def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+                            def referencedFields = subjectNet.dataSet.findAll { transition_switcher.value == "static" ? !it.key.endsWith("_tmp") : it.key.endsWith("_tmp") }.collectEntries { [it.key, it.value.name.defaultValue] }
+
+                            def fieldRefCase = createCase("field_config")
+                            def fieldRefTask = fieldRefCase.tasks[0].task
+                            change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
+                            change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
+
+                            def fieldTasks = !field_refs_tasks.value ? [] : field_refs_tasks.value
+                            def fieldCases = !field_refs_cases.value ? [] : field_refs_cases.value
+                            change field_refs_tasks value { fieldTasks + fieldRefCase.tasks[0].task }
+                            change field_refs_cases value { fieldCases + fieldRefCase.stringId }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>line_divider2</id>
+                <logic>
+                    <behavior>visible</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>5</y>
+                    <rows>1</rows>
+                    <cols>4</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+            </dataRef>
+            <dataRef>
+                <id>save_register</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>3</x>
+                    <y>6</y>
+                    <rows>1</rows>
+                    <cols>1</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>save_register_set</id>
+                    <actions phase="post">
+                        <action>
+                            register_map: f.register_map,
+                            field_refs_tasks: f.field_refs_tasks,
+                            field_refs_cases: f.field_refs_cases,
+                            transition_switcher: f.transition_switcher,
+                            sector_map: f.sector_map;
+
+                            if (register_map.value == null || register_map.value == "") {
+                                throw new IllegalArgumentException("Nebola vybraná hodnota registra")
+                            }
+
+                            def netSuffix = register_map.value.replace("/", "_")
+                            def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
+                            def subjectTransition = subjectNet.transitions.find { it.key == transition_switcher.value }.value
+                            subjectTransition.dataSet = [:]
+                            def x = 0
+                            def y = 0
+                            field_refs_cases.value.each { fieldCaseId ->
+                                def fieldCase = workflowService.findOne(fieldCaseId)
+                                subjectTransition.dataSet.put(fieldCase.dataSet["referenced_field"].value, createNewDataSetLogic(x, y))
+                                y = x == 2 ? y + 1 : y
+                                x = x == 0 ? 2 : 0
+                            }
+                            petriNetService.save(subjectNet)
+
+                            if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                                def toDelete = field_refs_cases.value.collect()
+                                async.run {
+                                    toDelete.each {
+                                        workflowService.deleteCase(it)
+                                    }
+                                }
+                                change field_refs_tasks value { [] }
+                                change field_refs_cases value { [] }
+                            }
+
+                            async.run {
+                                migrationHelper.updateCasesCursor({ def useCase ->
+                                    migrationHelper.setPetriNet(useCase)
+                                    taskService.reloadTasks(useCase)
+                                }, "subject" + newSuffix)
+                            }
+                        </action>
+                    </actions>
+                </event>
             </dataRef>
         </dataGroup>
         <event type="assign">
             <id>register_config_assign</id>
+            <actions phase="pre">
+                <action>
+                    field_refs_cases: f.field_refs_cases,
+                    field_refs_tasks: f.field_refs_tasks;
+
+                    if (field_refs_tasks.value != null &amp;&amp; !field_refs_tasks.value.isEmpty()) {
+                        def toDelete = field_refs_cases.value.collect()
+                        async.run {
+                            toDelete.each {
+                                workflowService.deleteCase(it)
+                            }
+                        }
+                        change field_refs_tasks value { [] }
+                        change field_refs_cases value { [] }
+                    }
+                </action>
+                <action>
+                    register_map: f.register_map;
+
+                    change register_map value { null }
+                    change register_map options { [:] }
+                </action>
+                <action>
+                    sector_map: f.sector_map;
+
+                    change sector_map value { null }
+                    def sectors = uriService.findByLevel(1)
+                    change sector_map options { sectors.collectEntries { [it._id.toString(), it.name] } }
+                </action>
+            </actions>
         </event>
         <event type="finish">
             <id>register_config_finish</id>
+            <title>Uložiť zmeny</title>
         </event>
         <event type="cancel">
             <id>register_config_cancel</id>
+            <title>Zahodiť zmeny</title>
         </event>
         <event type="delegate">
             <id>register_config_delegate</id>
+            <title/>
         </event>
     </transition>
 </document>

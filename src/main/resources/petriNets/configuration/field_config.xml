@@ -1,0 +1,201 @@
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://petriflow.com/petriflow.schema.xsd">
+    <id>field_config</id>
+    <initials>FCG</initials>
+    <title>Konfigurácia fieldov</title>
+    <icon>device_hub</icon>
+    <defaultRole>true</defaultRole>
+    <anonymousRole>false</anonymousRole>
+    <transitionRole>false</transitionRole>
+    <caseName>Konfigurácia fieldov</caseName>
+
+
+    <data type="text">
+        <id>register_id</id>
+        <title/>
+    </data>
+    <data type="enumeration_map">
+        <id>referenced_field</id>
+        <title>Údaj</title>
+        <component>
+            <name>autocomplete</name>
+            <property key="filter">substring</property>
+        </component>
+    </data>
+    <data type="button">
+        <id>move_up</id>
+        <title/>
+        <placeholder>arrow_upward</placeholder>
+        <component>
+            <name>icon</name>
+        </component>
+    </data>
+    <data type="button">
+        <id>move_down</id>
+        <title/>
+        <placeholder>arrow_downward</placeholder>
+        <component>
+            <name>icon</name>
+        </component>
+    </data>
+    <data type="button">
+        <id>remove_field</id>
+        <title/>
+        <placeholder>delete</placeholder>
+        <component>
+            <name>icon</name>
+        </component>
+    </data>
+    <transition>
+        <id>field_reference</id>
+        <x>100</x>
+        <y>100</y>
+        <label/>
+        <dataGroup>
+            <id>field_reference_1</id>
+            <cols>8</cols>
+            <layout>grid</layout>
+            <dataRef>
+                <id>referenced_field</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>0</x>
+                    <y>0</y>
+                    <rows>1</rows>
+                    <cols>3</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+            </dataRef>
+            <dataRef>
+                <id>move_up</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>3</x>
+                    <y>0</y>
+                    <rows>1</rows>
+                    <cols>1</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>move_up_set</id>
+                    <actions phase="post">
+                        <action>
+                            register_id: f.register_id;
+
+                            def configCase = workflowService.findOne(register_id.value)
+                            def configTask = configCase.tasks.find { it.transition == "register_config" }.task
+
+                            def taskValue = configCase.dataSet["field_refs_tasks"].value
+                            def caseValue = configCase.dataSet["field_refs_cases"].value
+
+                            def index = caseValue.indexOf(useCase.stringId)
+                            if (index == 0) {
+                                return
+                            }
+                            taskValue.swap(index-1, index)
+                            caseValue.swap(index-1, index)
+
+                            change "field_refs_tasks", configCase.stringId, configTask value { taskValue }
+                            change "field_refs_cases", configCase.stringId, configTask value { caseValue }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>move_down</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>4</x>
+                    <y>0</y>
+                    <rows>1</rows>
+                    <cols>1</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>move_down_set</id>
+                    <actions phase="post">
+                        <action>
+                            register_id: f.register_id;
+
+                            def configCase = workflowService.findOne(register_id.value)
+                            def configTask = configCase.tasks.find { it.transition == "register_config" }.task
+
+                            def taskValue = configCase.dataSet["field_refs_tasks"].value
+                            def caseValue = configCase.dataSet["field_refs_cases"].value
+
+                            def index = caseValue.indexOf(useCase.stringId)
+                            if (index == taskValue.size() - 1) {
+                                return
+                            }
+                            taskValue.swap(index, index+1)
+                            caseValue.swap(index, index+1)
+
+                            change "field_refs_tasks", configCase.stringId, configTask value { taskValue }
+                            change "field_refs_cases", configCase.stringId, configTask value { caseValue }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+            <dataRef>
+                <id>remove_field</id>
+                <logic>
+                    <behavior>editable</behavior>
+                </logic>
+                <layout>
+                    <x>5</x>
+                    <y>0</y>
+                    <rows>1</rows>
+                    <cols>1</cols>
+                    <template>material</template>
+                    <appearance>outline</appearance>
+                </layout>
+                <event type="set">
+                    <id>remove_field_set</id>
+                    <actions phase="post">
+                        <action>
+                            register_id: f.register_id;
+
+                            def configCase = workflowService.findOne(register_id.value)
+                            def configTask = configCase.tasks.find { it.transition == "register_config" }.task
+
+                            def taskValue = configCase.dataSet["field_refs_tasks"].value
+                            def caseValue = configCase.dataSet["field_refs_cases"].value
+
+                            def index = caseValue.indexOf(useCase.stringId)
+                            taskValue.remove(index)
+                            caseValue.remove(index)
+
+                            change "field_refs_tasks", configCase.stringId, configTask value { taskValue }
+                            change "field_refs_cases", configCase.stringId, configTask value { caseValue }
+
+                            def stringId = useCase.stringId
+                            async.run {
+                                workflowService.deleteCase(stringId)
+                            }
+                        </action>
+                    </actions>
+                </event>
+            </dataRef>
+        </dataGroup>
+        <event type="assign">
+            <id>os_config_assign</id>
+        </event>
+        <event type="finish">
+            <id>os_config_finish</id>
+        </event>
+        <event type="cancel">
+            <id>os_config_cancel</id>
+        </event>
+        <event type="delegate">
+            <id>os_config_delegate</id>
+        </event>
+    </transition>
+</document>
