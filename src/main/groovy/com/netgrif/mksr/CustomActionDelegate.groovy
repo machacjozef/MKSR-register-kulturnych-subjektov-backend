@@ -26,6 +26,7 @@ import com.netgrif.mksr.petrinet.domain.UriNodeDataRepository
 import com.netgrif.mksr.startup.NetRunner
 import org.apache.commons.lang3.StringUtils
 import org.bson.types.ObjectId
+import org.drools.core.util.LinkedList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.apache.poi.ss.usermodel.*
@@ -78,7 +79,8 @@ class CustomActionDelegate extends ActionDelegate {
     void createOrUpdateFolder(String id, String uri) {
         Case menuItem = findMenuItem(id)
         if (!menuItem) {
-            createUri(uri, UriContentType.DEFAULT)}
+            createUri(uri, UriContentType.DEFAULT)
+        }
     }
 
     private Map<String, I18nString> collectRolesForPreferenceItem(Map<String, String> roles) {
@@ -251,8 +253,9 @@ class CustomActionDelegate extends ActionDelegate {
             taskService.reloadTasks(useCase)
         }, NetRunner.PetriNetEnum.SUBJECT.identifier)
     }
-    String textPreprocess(String text){
-        return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.","_").replaceAll(" ","")
+
+    String textPreprocess(String text) {
+        return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.", "_").replaceAll(" ", "")
     }
 
     def createNewNet(String newIdentifier) {
@@ -316,16 +319,35 @@ class CustomActionDelegate extends ActionDelegate {
     }
 
 
-
-
-    String importData(def net, def field, def zoznam) {
+    String importData(PetriNet net, def field, def zoznam) {
+        String logy = ""
         def excelData = loadDataBasedOnFileExtension(field.value.name, field.value.path, false)
 
         if (excelData == null) {
             throw new IllegalArgumentException("Zly format")
         }
-        return ""
 
+        def importIdList = []
+        zoznam.each { it ->
+            Case caze = workflowService.findOne(taskService.findOne(it).getCaseId())
+            if (caze.dataSet.get("register_ids_clone").value == "new") {
+                importIdList.add(caze.dataSet.get("new_title").value as String)
+            } else {
+                importIdList.add(caze.dataSet.get("register_ids_clone").value as String)
+            }
+        }
+
+        excelData.data.each { row -> {
+            Case caze = createCase(net.identifier)
+            row.each { data -> {
+                int index = row.indexOf(data)
+                caze.dataSet[importIdList.get(index)].value = data
+                }}
+            logy += "Pridavam zaznam: ${row} /n"
+            workflowService.save(caze)
+            }
+        }
+        return logy
     }
 
 
@@ -512,10 +534,10 @@ class CustomActionDelegate extends ActionDelegate {
         return zhodneZnaky / mensiaDlzka.toDouble()
     }
 
-    def generateDataField(PetriNet netValue, def zoznam){
-        zoznam.each{it ->
+    def generateDataField(PetriNet netValue, def zoznam) {
+        zoznam.each { it ->
             Case caze = workflowService.findOne(taskService.findOne(it).getCaseId())
-            if(caze.dataSet.get("register_ids_clone").value  == "new"){
+            if (caze.dataSet.get("register_ids_clone").value == "new") {
                 netValue = appendToNetNewField(netValue, caze.dataSet.get("new_title").value, caze.dataSet.get("new_type").value)
             }
         }

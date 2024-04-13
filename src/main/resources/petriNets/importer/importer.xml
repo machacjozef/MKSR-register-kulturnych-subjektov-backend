@@ -381,7 +381,7 @@
 					def netSuffix = register_map.value.replace("/", "_")
 					def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
 
-					String totok = importData(subjectNet, uploadFile, zoznam_import)
+					String totok = importData(subjectNet, uploadFile, zoznam_import.value)
 					change logs value { logs.value + totok }
 				</action>
 			</actions>
