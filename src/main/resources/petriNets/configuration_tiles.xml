@@ -16,7 +16,7 @@
                     createOrUpdateMenuItem("configuration", "/configuration", "Case",
                             "processIdentifier:\"configuration\"",
                             "folder",
-                            "Konfigurácia registrov", ["configuration"])
+                            "Konfigurácia registrov", ["configuration"], false)
 
                     createOrUpdateMenuItem("import", "/configuration", "Case",
                             "processIdentifier:\"import\"",

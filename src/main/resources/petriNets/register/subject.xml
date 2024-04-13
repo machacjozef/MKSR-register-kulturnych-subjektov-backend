@@ -145,10 +145,9 @@
 	<!--END OF GALERIES	-->
 	<transition>
 		<id>disable</id>
-		<label>Disable</label>
 		<x>240</x>
 		<y>112</y>
-		<label/>
+		<label>Disable</label>
 	</transition>
 	<transition>
 		<id>enable</id>
@@ -165,19 +164,13 @@
 		<id>delete</id>
 		<x>464</x>
 		<y>80</y>
-		<label>delete</label>
+		<label>Delete</label>
 	</transition>
 	<transition>
 		<id>init</id>
 		<x>80</x>
 		<y>80</y>
 		<label>init</label>
-	</transition>
-	<transition>
-		<id>edit</id>
-		<x>400</x>
-		<y>16</y>
-		<label>edit</label>
 	</transition>
 	<transition>
 		<id>dynamic</id>
@@ -748,20 +741,6 @@
 		<type>regular</type>
 		<sourceId>init</sourceId>
 		<destinationId>p1</destinationId>
-		<multiplicity>1</multiplicity>
-	</arc>
-	<arc>
-		<id>a14</id>
-		<type>regular</type>
-		<sourceId>p2</sourceId>
-		<destinationId>edit</destinationId>
-		<multiplicity>1</multiplicity>
-	</arc>
-	<arc>
-		<id>a15</id>
-		<type>regular</type>
-		<sourceId>edit</sourceId>
-		<destinationId>p2</destinationId>
 		<multiplicity>1</multiplicity>
 	</arc>
 	<arc>

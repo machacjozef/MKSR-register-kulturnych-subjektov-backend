@@ -65,13 +65,15 @@ class CustomActionDelegate extends ActionDelegate {
      * @param bannedRoles
      * @return
      */
-    Case createOrUpdateMenuItem(String id, String uri, String type, String query, String icon, String title, List<String> allowedNets, Map<String, String> roles = [:], Map<String, String> bannedRoles = [:]) {
+    Case createOrUpdateMenuItem(String id, String uri, String type, String query, String icon, String title, List<String> allowedNets, boolean showNewButton = true, Map<String, String> roles = [:], Map<String, String> bannedRoles = [:]) {
         collectRolesForPreferenceItem(roles)
         Case menuItem = findMenuItem(id)
         if (!menuItem) {
             Case filter = createFilter(title, query, type, allowedNets, icon, "private", null)
             createUri(uri, UriContentType.DEFAULT)
-            return createMenuItem(uri, id, filter, roles, bannedRoles)
+            def menuItemCase = createMenuItem(uri, id, filter, roles, bannedRoles)
+            menuItemCase.dataSet["show_create_case_button"].value = showNewButton
+            workflowService.save(menuItemCase)
         } else {
             Case filter = getFilterFromMenuItem(menuItem)
             changeFilter filter query { query }
