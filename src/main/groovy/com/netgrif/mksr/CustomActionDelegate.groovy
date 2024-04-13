@@ -259,9 +259,6 @@ class CustomActionDelegate extends ActionDelegate {
         }, NetRunner.PetriNetEnum.SUBJECT.identifier)
     }
 
-    String textPreprocess(String text) {
-        return StringUtils.stripAccents(text).toLowerCase().replaceAll("\\.", "_").replaceAll(" ", "")
-
     def revertChanges(){
         List<String> fieldIds = useCase.getPetriNet().getTransition("dynamic").dataSet.collect { it.getKey() }
         fieldIds.each { fieldId ->
@@ -314,20 +311,6 @@ class CustomActionDelegate extends ActionDelegate {
         fl.y = y
         dfl.setLayout(fl)
         return dfl
-    }
-
-    def test(Field register_map) {
-        def netSuffix = register_map.value.replace("/", "_")
-        def subjectNet = petriNetService.getNewestVersionByIdentifier("subject" + netSuffix)
-        def referencedFields = subjectNet.dataSet.collectEntries { [it.key, it.value.name.defaultValue] }
-        def subjectTransition = subjectNet.transitions.find { it.key == "dynamic" }.value
-        subjectTransition.dataSet.each { field ->
-            def fieldRefCase = createCase("field_config")
-            def fieldRefTask = fieldRefCase.tasks[0].task
-            change "register_id", fieldRefCase.stringId, fieldRefTask value { useCase.stringId }
-            change "referenced_field", fieldRefCase.stringId, fieldRefTask options { referencedFields }
-            change "referenced_field", fieldRefCase.stringId, fieldRefTask value { field.key }
-        }
     }
 
     PetriNet appendToNetNewField(PetriNet net, String id, String type) {

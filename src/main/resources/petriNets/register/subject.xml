@@ -439,7 +439,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>nazov_galerie_tmp</id>
+				<id>nazov_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -537,7 +537,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>webove_sidlo_tmp</id>
+				<id>web_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
@@ -607,7 +607,7 @@
 				</layout>
 			</dataRef>
 			<dataRef>
-				<id>zameranie_specializacia_galerie_tmp</id>
+				<id>zameranie_specializacia_tmp</id>
 				<logic>
 					<behavior>editable</behavior>
 				</logic>
